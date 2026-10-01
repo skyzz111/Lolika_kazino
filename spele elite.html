@@ -1,0 +1,4670 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sky Casino: Social Elite v3.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+:root {
+    --bg-dark: #070a12;
+    --panel-bg: rgba(18, 26, 43, 0.92);
+    --panel-border: rgba(255, 255, 255, 0.12);
+    --felt: radial-gradient(circle, #0e523e 0%, #062b20 100%);
+    --rim: #131b29;
+    --gold: #f59e0b;
+    --gold-glow: rgba(245, 158, 11, 0.45);
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.45);
+    --danger: #ef4444;
+    --success: #10b981;
+    
+    --rare: #06b6d4;
+    --super-rare: #3b82f6;
+    --legendary: #f59e0b;
+    --mythic: #a855f7;
+    --exotic: #ec4899;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'Outfit', -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.1) 0px, transparent 50%);
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    color: #f8fafc;
+    user-select: none;
+}
+
+.glass-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    border-radius: 24px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--accent-glow);
+}
+
+.btn-gold {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #0f172a;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px var(--gold-glow);
+}
+
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--gold-glow);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+}
+
+.auth-input {
+    width: 100%;
+    padding: 14px 18px;
+    margin: 8px 0;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: 0.2s;
+}
+
+.auth-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+#auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 10, 18, 0.95);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#hud {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(16px);
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--panel-border);
+    z-index: 1000;
+}
+
+.hud-balance {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(245, 158, 11, 0.1);
+    padding: 6px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+#menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 10, 18, 0.92);
+    backdrop-filter: blur(25px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+}
+
+.menu-dashboard {
+    width: 980px;
+    max-width: 94vw;
+    height: 640px;
+    max-height: 88vh;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    overflow: hidden;
+}
+
+.menu-sidebar {
+    background: rgba(15, 23, 42, 0.6);
+    border-right: 1px solid var(--panel-border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.nav-tab {
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: 0.2s;
+    width: 100%;
+}
+
+.nav-tab:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-tab.active {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: var(--accent);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.menu-content {
+    padding: 30px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.menu-panel {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.menu-panel.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.game-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--gold);
+    box-shadow: 0 10px 30px -10px var(--gold-glow);
+}
+
+#table {
+    width: 1050px;
+    height: 480px;
+    max-width: 94vw;
+    background: var(--felt);
+    border: 16px solid var(--rim);
+    outline: 2px solid var(--gold);
+    border-radius: 380px 380px 180px 180px;
+    position: relative;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 80px rgba(0,0,0,0.6);
+    margin-top: 10px;
+}
+
+.slot {
+    position: absolute;
+    text-align: center;
+    width: 160px;
+    font-weight: 700;
+    color: white;
+    transition: 0.4s;
+    padding: 10px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.slot.active-turn {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: var(--gold);
+    box-shadow: 0 0 25px var(--gold-glow);
+}
+
+#dealer-slot { top: 20px; left: 50%; transform: translateX(-50%); }
+#player-slot { bottom: 35px; left: 50%; transform: translateX(-50%); border-color: var(--gold); min-width: 220px; }
+#npc1-slot { top: 110px; left: 40px; }
+#npc2-slot { top: 270px; left: 70px; }
+#npc3-slot { top: 110px; right: 40px; }
+#npc4-slot { top: 270px; right: 70px; }
+
+.card-hand {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 6px;
+    min-height: 60px;
+}
+
+.card {
+    width: 42px;
+    height: 60px;
+    background: #ffffff;
+    border-radius: 6px;
+    color: #0f172a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    animation: popIn 0.25s ease;
+    border: 1px solid #cbd5e1;
+}
+
+.card.red { color: #dc2626; }
+
+@keyframes popIn {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.chip-container {
+    display: flex;
+    gap: 8px;
+    background: rgba(15, 23, 42, 0.85);
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(10px);
+}
+
+.chip {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.75rem;
+    color: white;
+    cursor: pointer;
+    border: 3px dashed rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transition: all 0.2s ease;
+}
+
+.chip:hover { transform: translateY(-4px) scale(1.1); }
+
+.c-10 { background: #3b82f6; }
+.c-50 { background: #f97316; }
+.c-100 { background: #1e293b; }
+.c-1k { background: #f59e0b; color: #0f172a; }
+.c-10k { background: #ec4899; }
+.c-100k { background: #10b981; }
+
+.all-in {
+    background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%) !important;
+    width: 70px;
+    border-radius: 20px;
+    border-style: solid;
+}
+
+.ov {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 10, 18, 0.92);
+    backdrop-filter: blur(20px);
+    z-index: 5500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.roulette-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 880px;
+    width: 100%;
+}
+
+.roulette-board {
+    display: grid;
+    grid-template-columns: repeat(13, 1fr);
+    gap: 4px;
+    margin-top: 15px;
+    width: 100%;
+}
+
+.r-cell {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 10px 4px;
+    text-align: center;
+    font-weight: 800;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: 0.15s;
+}
+
+.r-cell:hover { border-color: var(--gold); transform: scale(1.05); }
+.r-red { background: #991b1b; color: white; }
+.r-black { background: #1e293b; color: white; }
+.r-green { background: #065f46; color: white; }
+
+#phone-overlay {
+    position: fixed;
+    bottom: 80px;
+    right: 25px;
+    width: 310px;
+    height: 440px;
+    background: #0f172a;
+    border-radius: 28px;
+    border: 4px solid #334155;
+    display: none;
+    flex-direction: column;
+    z-index: 8000;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+/* Bilance visur */
+#global-balance {
+    position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+    z-index: 9500; pointer-events: none;
+    background: rgba(15,23,42,0.95); border: 1px solid rgba(245,158,11,0.5);
+    color: var(--gold); font-weight: 900; padding: 6px 16px;
+    border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+/* Lai izvēlne un spēļu logi neiet zem bilances */
+#menu-overlay, .ov { padding-top: 70px; overflow-y: auto; }
+.ov { align-items: flex-start; }
+.ov > * { margin: auto; }
+.menu-dashboard { max-height: calc(100vh - 140px); }
+</style>
+</head>
+
+<body>
+
+<!-- Toast Notification -->
+<div id="toast-notification" class="fixed top-5 left-1/2 -translate-x-1/2 z-[10000] px-6 py-3 rounded-xl font-bold text-sm shadow-2xl transition-all duration-300 opacity-0 pointer-events-none"></div>
+
+<!-- AUTHENTICATION OVERLAY -->
+<div id="auth-overlay">
+    <div class="auth-box glass-panel p-8 text-center w-96">
+        <h2 class="text-3xl font-black mb-2 tracking-widest text-amber-400">SKY CASINO</h2>
+        <p class="text-xs text-slate-400 mb-6 font-semibold">SOCIAL ELITE V3.2</p>
+        <input type="text" id="user-name" class="auth-input" placeholder="Lietotājvārds">
+        <input type="password" id="user-pass" class="auth-input" placeholder="Parole">
+        <button onclick="handleAuth()" class="btn-gold w-full mt-4 py-3 text-sm">
+            IEIET / REĢISTRĒTIES
+        </button>
+    </div>
+</div>
+
+<!-- TOP NAVIGATION HUD -->
+<div id="hud">
+    <div class="text-lg font-black tracking-widest text-amber-400 flex items-center gap-2">
+        SKY CASINO <span class="text-white text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30">BLACKJACK 21</span>
+    </div>
+
+    <div class="flex items-center gap-3">
+        <!-- HUD Daily Gift Status Badge -->
+        <div id="hud-daily-status"></div>
+
+        <button id="btn-phone" onclick="togglePhone()" class="btn-primary py-2 px-3 text-xs" style="display:none; background:#334155;">
+            📱 Čats
+        </button>
+        <button onclick="openMenu()" class="btn-gold py-2 px-4 text-xs flex items-center gap-2">
+            ⚙ Izvēlne / Atpakaļ
+        </button>
+    </div>
+</div>
+
+<div id="menu-overlay">
+    <div class="menu-dashboard glass-panel">
+        <div class="menu-sidebar">
+            <div>
+                <div class="text-xl font-black tracking-widest text-white mb-6 flex items-center gap-2">
+                    SKY CASINO <span class="text-amber-400">ELITE</span>
+                </div>
+                <div class="space-y-2">
+                    <button class="nav-tab active" onclick="switchTab('p-main', this)">🎮 Spēļu Zāle</button>
+                    <button class="nav-tab" onclick="switchTab('p-shop', this)">🛍 VIP Veikals</button>
+                    <button class="nav-tab" onclick="switchTab('p-inv', this)">🎒 Inventārs</button>
+                    <button class="nav-tab" onclick="switchTab('p-promo', this)">🎟 Promokodi</button>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <button id="abuse-btn" onclick="toggleAbuse()" class="btn-primary w-full text-xs py-2 bg-slate-700">
+                    ADMIN ABUSE: OFF
+                </button>
+                <button onclick="location.reload()" class="btn-danger w-full text-xs py-2">
+                    Atslēgties
+                </button>
+            </div>
+        </div>
+
+        <div class="menu-content">
+            <!-- 1. SPĒĻU ZĀLE PANEL -->
+            <div id="p-main" class="menu-panel active">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-black">Spēļu Zāle</h2>
+                        <p id="welcome-user" class="text-xs text-slate-400 mt-1"></p>
+                    </div>
+                </div>
+
+                <!-- Daily Gift Banner Inside Menu -->
+                <div class="glass-panel p-5 mb-6 border border-amber-500/30 bg-gradient-to-r from-amber-500/10 to-transparent flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-amber-400 text-lg flex items-center gap-2">🎁 Dienas Dāvana</h3>
+                        <p class="text-xs text-slate-300">Saņem bezmaksas $1,000 katru dienu!</p>
+                    </div>
+                    <button id="daily-btn" onclick="claimDailyGift()" class="btn-gold py-2 px-6 text-sm">
+                        SAŅEMT $1,000
+                    </button>
+                </div>
+
+                <!-- Games Grid -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="game-card" onclick="closeMenu()">
+                        <div class="text-4xl mb-3">🃏</div>
+                        <h3 class="font-bold text-lg mb-1">Blackjack 21</h3>
+                        <p class="text-xs text-slate-400">Dīleris Uģis un NPC pretinieki pie galda.</p>
+                    </div>
+                    <div class="game-card" onclick="openGame('sl-ov')">
+                        <div class="icon text-4xl mb-3">🎡</div>
+                        <h3 class="font-bold text-lg mb-1">Eiropas Rulete</h3>
+                        <p class="text-xs text-slate-400">Īstais 0-36 skaitļu galds ar reizinātājiem.</p>
+                    </div>
+                    <div class="game-card" onclick="openGame('pk-ov')">
+                        <div class="icon text-4xl mb-3">♠️</div>
+                        <h3 class="font-bold text-lg mb-1">Texas Hold'em</h3>
+                        <p class="text-xs text-slate-400">4-spēlētāju pokera galds ar Flop, Turn, River.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. VIP SHOP PANEL -->
+                         <!-- 2. VIP SHOP PANEL -->
+            <div id="p-shop" class="menu-panel">
+                <div class="flex justify-between items-center mb-4 gap-3">
+                    <div>
+                        <h2 class="text-2xl font-black">VIP Veikals</h2>
+                        <p class="text-xs text-slate-400">Ekskluzīvas spēles lietas ar bonusa efektiem uz galda.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="hud-balance text-sm py-1.5 px-3">💰 $<span class="w2">0</span></div>
+                        <div class="bg-amber-500/10 border border-amber-500/30 text-amber-400 font-extrabold px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+                            ⏳ Atjaunojas pēc: <span id="shop-timer">05:00</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="shop-display" class="grid grid-cols-3 gap-4 max-h-[420px] overflow-y-auto pr-2"></div>
+            </div>
+
+            <!-- 3. INVENTORY PANEL -->
+            <div id="p-inv" class="menu-panel">
+                <div class="flex justify-between items-center mb-4 gap-3">
+                    <div>
+                        <h2 class="text-2xl font-black">Tavs Inventārs</h2>
+                        <p class="text-xs text-slate-400">Aprīko savas VIP lietas — tās būs redzamas uz Blackjack galda un dos bonusus!</p>
+                    </div>
+                    <div class="hud-balance text-sm py-1.5 px-3">💰 $<span class="w2">0</span></div>
+                </div>
+                <div id="inventory-display" class="grid grid-cols-3 gap-4 max-h-[420px] overflow-y-auto pr-2"></div>
+            </div>
+            <div id="p-shop" class="menu-panel">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-2xl font-black">VIP Veikals</h2>
+                        <p class="text-xs text-slate-400">Ekskluzīvas spēles lietas ar bonusa efektiem uz galda.</p>
+                    </div>
+                    <div class="bg-amber-500/10 border border-amber-500/30 text-amber-400 font-extrabold px-4 py-2 rounded-xl text-sm flex items-center gap-2">
+                        ⏳ Atjaunojas pēc: <span id="shop-timer">05:00</span>
+                    </div>
+                </div>
+                <div id="shop-display" class="grid grid-cols-3 gap-4 max-h-[420px] overflow-y-auto pr-2"></div>
+            </div>
+
+            <!-- 3. INVENTORY PANEL -->
+            <div id="p-inv" class="menu-panel">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-black">Tavs Inventārs</h2>
+                    <p class="text-xs text-slate-400">Aprīko savas VIP lietas — tās būs redzamas uz Blackjack galda un dos bonusus!</p>
+                </div>
+                <div id="inventory-display" class="grid grid-cols-3 gap-4 max-h-[420px] overflow-y-auto pr-2"></div>
+            </div>
+
+            <!-- 4. PROMO CODES PANEL -->
+            <div id="p-promo" class="menu-panel">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-black">Aktivizēt Promokodu</h2>
+                    <p class="text-xs text-slate-400">Ievadi savu slēpto promokodu, lai saņemtu bonusa līdzekļus.</p>
+                </div>
+                
+                <div class="max-w-md mx-auto text-center space-y-3 pt-6 mb-6">
+                    <input type="text" id="promo-in" placeholder="IEVADI KODU..." class="auth-input text-center uppercase tracking-widest font-bold text-amber-400 border-amber-500/40">
+                    <button onclick="redeem()" class="btn-gold w-full py-3 font-black tracking-wider">AKTIVIZĒT KODU</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="game-container" class="h-screen flex flex-col items-center justify-center relative p-4 overflow-y-auto pt-16">
+    <!-- Blackjack Table -->
+    <div id="table">
+        <!-- Blackjack Result Banner -->
+        <div id="bj-result-banner" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100] glass-panel px-8 py-5 rounded-2xl text-center border-2 border-amber-500/60 shadow-2xl bg-slate-900/95 backdrop-blur-xl transition-all duration-300 scale-95 opacity-0 pointer-events-none">
+            <div id="bj-result-title" class="text-2xl font-black tracking-widest uppercase mb-1 text-amber-400">UZVARA!</div>
+            <div id="bj-result-desc" class="text-sm font-bold text-slate-200">Laimēts $0</div>
+        </div>
+
+        <!-- X-Ray Panel -->
+        <div id="xray-panel" style="position:absolute; top:15px; right:20px; background:rgba(15,23,42,0.85); padding:8px 14px; border-radius:12px; border:1px solid var(--accent); display:none; text-align:center;">
+            <span style="font-size:0.65rem; color:var(--accent); font-weight:800;">X-RAY REDZAMĪBA</span>
+            <div id="next-card-view" class="card mt-1 mx-auto text-xs font-bold text-slate-800">?</div>
+        </div>
+
+        <div id="dealer-slot" class="slot">
+            <span class="text-xs text-slate-300">UĢIS (Dīleris)</span>
+            <div id="d-hand" class="card-hand"></div>
+        </div>
+
+        <div id="npc1-slot" class="slot">TONY<div id="nh1" class="card-hand"></div></div>
+        <div id="npc2-slot" class="slot">RICK<div id="nh2" class="card-hand"></div></div>
+
+        <div id="player-slot" class="slot">
+            <div class="flex items-center justify-center gap-1 font-extrabold text-amber-400 text-sm">
+                <span id="player-label-text">TU</span>
+                <span id="player-crown-icon"></span>
+            </div>
+            
+            <div id="p-hand" class="card-hand"></div>
+
+            <div id="table-equipped-items" class="flex flex-wrap items-center justify-center gap-1 mt-2 pt-1.5 border-t border-white/10 min-h-[26px]">
+                <span class="text-[10px] text-slate-400 italic">Nav lietu</span>
+            </div>
+        </div>
+
+        <div id="npc3-slot" class="slot">SARAH<div id="nh3" class="card-hand"></div></div>
+        <div id="npc4-slot" class="slot">VINNY<div id="nh4" class="card-hand"></div></div>
+    </div>
+
+    <!-- BLACKJACK CONTROLS PANEL (BELOW TABLE) -->
+    <div id="bj-control-panel" class="mt-4 flex flex-col items-center gap-3 z-50 w-full max-w-[1050px]">
+        <div class="glass-panel p-3 px-6 w-full flex flex-wrap items-center justify-between gap-4 border border-white/10 bg-slate-900/90 rounded-2xl">
+            <div class="flex items-center gap-3">
+                <div class="hud-balance text-sm py-1.5 px-3">
+                    <span>💰 Bilance:</span> $<span id="wall">0</span>
+                </div>
+                <div class="bg-amber-500/10 border border-amber-500/30 text-amber-400 font-extrabold px-3 py-2 rounded-xl text-xs flex items-center gap-1">
+                    Likme: <span id="p-bet-tag">($0)</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div id="deal-action-group" class="flex items-center gap-3">
+                    <button id="deal-btn" onclick="deal()" class="btn-gold text-sm py-2.5 px-8 shadow-lg">
+                        DALĪT KĀRTIS (DEAL)
+                    </button>
+                </div>
+
+                <div id="bj-actions" style="display:none;" class="flex items-center gap-2">
+                    <button onclick="pAction('hit')" class="btn-danger py-2.5 px-5 text-xs font-bold shadow-md">HIT (+KĀRTS)</button>
+                    <button onclick="pAction('stand')" class="btn-primary py-2.5 px-5 text-xs font-bold shadow-md">STAND (PIETIEK)</button>
+                    <button id="double-btn" onclick="pAction('double')" class="btn-gold py-2.5 px-5 text-xs font-bold shadow-md">DOUBLE x2</button>
+                    <button id="split-btn" onclick="pAction('split')" class="btn-primary py-2.5 px-5 text-xs font-bold shadow-md" style="background:#a855f7; display:none;">SPLIT</button>
+                </div>
+
+                <button id="cancel-btn" onclick="cancelBet()" class="btn-danger text-xs py-2.5 px-4 font-bold shadow-md" style="display:none;">
+                    Atcelt Likmi (-15%)
+                </button>
+            </div>
+        </div>
+
+        <div class="chip-container shadow-2xl">
+            <div class="chip c-10" onclick="bet(10)">10</div>
+            <div class="chip c-50" onclick="bet(50)">50</div>
+            <div class="chip c-100" onclick="bet(100)">100</div>
+            <div class="chip c-1k" onclick="bet(1000)">1K</div>
+            <div class="chip c-10k" onclick="bet(10000)">10K</div>
+            <div class="chip c-100k" onclick="bet(100000)">100K</div>
+            <div class="chip all-in" onclick="allIn()">ALL IN</div>
+        </div>
+    </div>
+</div>
+
+<!-- ROULETTE OVERLAY -->
+<div id="sl-ov" class="ov">
+    <div class="glass-panel p-6 roulette-container">
+        <div class="flex justify-between items-center w-full mb-4">
+            <div>
+                <h2 class="text-2xl font-black">🎡 EIROPAS RULETE</h2>
+                <p class="text-xs text-slate-400">Izvēlies lauciņu vai krāsu un griez ratu.</p>
+            </div>
+            <div class="text-right flex items-center gap-4">
+                <div>
+                    <div class="text-xs text-slate-400">Bilance</div>
+                    <div class="text-xl font-bold text-amber-400">$<span class="w2">0</span></div>
+                </div>
+                <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">
+                    ATPAKAĻ UZ MENU
+                </button>
+            </div>
+        </div>
+
+        <div class="relative my-2 flex justify-center">
+            <canvas id="roulette-canvas" width="220" height="220" class="rounded-full border-4 border-amber-500/50 shadow-2xl"></canvas>
+            <div style="position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-size:1.5rem; color:#ef4444;">▼</div>
+        </div>
+
+        <div class="w-full flex items-center gap-2 mb-3 bg-slate-900/60 p-2 rounded-xl border border-white/10 overflow-x-auto text-xs">
+            <span class="text-slate-400 font-bold text-xs whitespace-nowrap">Pēdējie:</span>
+            <div id="roulette-history" class="flex items-center gap-2"></div>
+        </div>
+
+        <div class="flex items-center justify-between w-full mb-3 bg-slate-900/80 p-3 rounded-xl border border-amber-500/30">
+            <span id="rl-selected-target" class="font-bold text-amber-400 text-sm">Mērķis: Nav izvēlēts</span>
+            <div class="flex items-center gap-3">
+                <span class="text-xs text-slate-300 font-bold">Likme ($):</span>
+                <input type="number" id="rl-bet-val" value="100" min="10" class="w-24 bg-slate-800 border border-slate-600 rounded-lg px-2 py-1 text-center font-bold text-sm text-white">
+                <button id="rl-spin-btn" onclick="spinRouletteWheel()" class="btn-gold text-xs py-1.5 px-5">GRIEZT RATU</button>
+            </div>
+        </div>
+
+        <div class="roulette-board">
+            <div class="r-cell r-green row-span-3 flex items-center justify-center font-black" onclick="placeRouletteBet('0')">0</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('3')">3</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('6')">6</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('9')">9</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('12')">12</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('15')">15</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('18')">18</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('21')">21</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('24')">24</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('27')">27</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('30')">30</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('33')">33</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('36')">36</div>
+
+            <div class="r-cell r-black" onclick="placeRouletteBet('2')">2</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('5')">5</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('8')">8</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('11')">11</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('14')">14</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('17')">17</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('20')">20</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('23')">23</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('26')">26</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('29')">29</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('32')">32</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('35')">35</div>
+
+            <div class="r-cell r-red" onclick="placeRouletteBet('1')">1</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('4')">4</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('7')">7</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('10')">10</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('13')">13</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('16')">16</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('19')">19</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('22')">22</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('25')">25</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('28')">28</div>
+            <div class="r-cell r-black" onclick="placeRouletteBet('31')">31</div>
+            <div class="r-cell r-red" onclick="placeRouletteBet('34')">34</div>
+        </div>
+
+        <div class="grid grid-cols-6 gap-2 w-full mt-2 text-xs">
+            <button onclick="placeRouletteBet('1ST12')" class="btn-primary py-2 bg-slate-800 border border-white/10">1st 12</button>
+            <button onclick="placeRouletteBet('2ND12')" class="btn-primary py-2 bg-slate-800 border border-white/10">2nd 12</button>
+            <button onclick="placeRouletteBet('3RD12')" class="btn-primary py-2 bg-slate-800 border border-white/10">3rd 12</button>
+            <button onclick="placeRouletteBet('RED')" class="btn-danger py-2">SARKANAIS</button>
+            <button onclick="placeRouletteBet('BLACK')" class="btn-primary py-2 bg-slate-900 border border-white/20">MELNAIS</button>
+            <button onclick="placeRouletteBet('EVEN')" class="btn-primary py-2 bg-slate-800 border border-white/10">PĀRIS</button>
+        </div>
+
+        <div id="rl-status-msg" class="mt-3 text-center text-xs font-bold text-amber-400 h-4"></div>
+    </div>
+</div>
+
+<!-- POKER OVERLAY -->
+<div id="pk-ov" class="ov">
+    <div class="glass-panel p-6 max-w-4xl w-full">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-2xl font-black">♠️ TEXAS HOLD'EM POKERIS</h2>
+                <p class="text-xs text-slate-400">Sacenties pret 3 botu pretiniekiem atklātajā galdā.</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <div class="text-xs text-slate-400">Pots</div>
+                    <div class="text-xl font-bold text-amber-400" id="poker-pot">$0</div>
+                </div>
+                <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ UZ MENU</button>
+            </div>
+        </div>
+
+        <div class="bg-emerald-900/40 border-8 border-slate-800 rounded-3xl p-6 relative min-h-[340px] flex flex-col justify-between">
+            <div class="grid grid-cols-3 gap-4 text-center text-xs font-bold">
+                <div class="bg-slate-900/80 p-2 rounded-xl border border-white/10">
+                    <div>RICK (BOT 1)</div>
+                    <div id="poker-bot1-cards" class="card-hand justify-center mt-1"></div>
+                </div>
+                <div class="bg-slate-900/80 p-2 rounded-xl border border-white/10">
+                    <div>SARAH (BOT 2)</div>
+                    <div id="poker-bot2-cards" class="card-hand justify-center mt-1"></div>
+                </div>
+                <div class="bg-slate-900/80 p-2 rounded-xl border border-white/10">
+                    <div>VINNY (BOT 3)</div>
+                    <div id="poker-bot3-cards" class="card-hand justify-center mt-1"></div>
+                </div>
+            </div>
+
+            <div class="my-4 text-center">
+                <div class="text-xs font-bold text-slate-300 mb-1">KOPĒJĀS KĀRTIS (<span id="poker-phase-tag" class="text-amber-400">GATAVS</span>)</div>
+                <div id="poker-community-cards" class="card-hand justify-center"></div>
+            </div>
+
+            <div class="bg-slate-900/90 p-3 rounded-2xl border border-amber-500/40 text-center max-w-sm mx-auto w-full">
+                <div class="text-xs font-bold text-amber-400">TAVAS KĀRTIS</div>
+                <div id="poker-player-cards" class="card-hand justify-center mt-1"></div>
+            </div>
+        </div>
+
+        <div id="poker-status" class="text-center text-xs font-bold text-amber-400 my-3 h-4"></div>
+
+        <div class="flex justify-center gap-3">
+            <button id="pk-start-btn" onclick="startPokerHand()" class="btn-gold py-2 px-6 text-xs">SĀKT RAUNDU ($100)</button>
+            <button id="pk-check-btn" onclick="pokerAction('check')" class="btn-primary py-2 px-5 text-xs" style="display:none;">CHECK / CALL</button>
+            <button id="pk-call-btn" onclick="pokerAction('check')" class="btn-primary py-2 px-5 text-xs" style="display:none;">CALL</button>
+            <button id="pk-raise-btn" onclick="pokerAction('raise')" class="btn-gold py-2 px-5 text-xs" style="display:none;">RAISE (+$100)</button>
+            <button id="pk-fold-btn" onclick="pokerAction('fold')" class="btn-danger py-2 px-5 text-xs" style="display:none;">FOLD</button>
+        </div>
+    </div>
+</div>
+
+<!-- Phone Overlay -->
+<div id="phone-overlay">
+    <div class="bg-slate-800 p-3 flex justify-between items-center border-b border-slate-700">
+        <span class="text-xs font-bold text-white flex items-center gap-2">📱 Rick VIP Čats</span>
+        <button onclick="togglePhone()" class="text-slate-400 hover:text-white text-xs font-bold">✕</button>
+    </div>
+    <div id="phone-chat" class="flex-1 p-3 overflow-y-auto space-y-2 text-xs">
+        <div class="bg-slate-700 text-amber-300 p-2 rounded-xl text-left max-w-[80%]">Rick: Čau! Laipni lūgts Sky Casino VIP čatā.</div>
+    </div>
+    <div class="p-2 bg-slate-900 flex gap-2 border-t border-slate-700">
+        <input type="text" id="phone-input" placeholder="Raksti ziņu..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white outline-none">
+        <button onclick="sendPhoneMessage()" class="btn-gold py-1 px-3 text-xs">Sūtīt</button>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// GLOBAL STATE & DATA STRUCTURES
+// ==========================================
+let currentUser = "Guest";
+let wall = 2500;
+let currentBet = 0;
+let abuse = false;
+let lastDailyClaim = null;
+let inventory = [];
+let equipped = [];
+let usedCodes = [];
+
+// Shop Catalog (Increased Prices)
+const SHOP_ITEMS = [
+    {
+        id: 'chili',
+        name: '🌶️ Čili Pipars',
+        price: 25000,
+        rarity: 'rare',
+        rarityLabel: 'RARE',
+        desc: 'Ass un kaislīgs bonuss spēļu galdos.',
+        bonusText: '⚡ KO ŠĪ LIETA DOD SPĒLĒS:\n• Blackjack: +25% Papildus laimests\n• Rulete: 3x Izmaksa sarkanam/melnam\n• Pokeris: 1.5x Bonuss potam'
+    },
+    {
+        id: 'crown',
+        name: '👑 Karaliskais Kronis',
+        price: 250000,
+        rarity: 'legendary',
+        rarityLabel: 'LEGENDARY',
+        desc: 'Karaliskais simbols un VIP statuss uz galda.',
+        bonusText: '⚡ KO ŠĪ LIETA DOD SPĒLĒS:\n• Blackjack: 3x Multiplier uzvarām (4x uz BJ)\n• Rulete: 3x Izmaksa uz krāsām / 50x uz skaitli\n• Pokeris: 2x Pot reizinātājs'
+    },
+    {
+        id: 'xray',
+        name: '🕶️ X-Ray Brilles',
+        price: 120000,
+        rarity: 'mythic',
+        rarityLabel: 'MYTHIC',
+        desc: 'Saskati slēptās kārtis pirms gājiena.',
+        bonusText: '⚡ KO ŠĪ LIETA DOD SPĒLĒS:\n• Blackjack: Rāda nākamo kārti kaudzē\n• Rulete: VIP Radara indikators\n• Pokeris: Atklāj VISUS botu kārtis galdā!'
+    },
+    {
+        id: 'pizza',
+        name: '🍕 Karstā Pica',
+        price: 10000,
+        rarity: 'rare',
+        rarityLabel: 'COMMON',
+        desc: 'Garšīga pica spēka un brīvās naudas uzturēšanai.',
+        bonusText: '⚡ KO ŠĪ LIETA DOD SPĒLĒS:\n• Visās 3 spēlēs: +$50 Bezmaksas nauda katra raunda sākumā!'
+    },
+    {
+        id: 'cocktail',
+        name: '🍹 Eksotiskais Kokteilis',
+        price: 20000,
+        rarity: 'super-rare',
+        rarityLabel: 'SUPER RARE',
+        desc: 'Atsvaidzinošs VIP dzēriens.',
+        bonusText: '⚡ KO ŠĪ LIETA DOD SPĒLĒS:\n• Visās 3 spēlēs: +$100 Bezmaksas nauda katra raunda sākumā!'
+    },
+    {
+        id: 'clover',
+        name: '🍀 Laimes Āboliņš',
+        price: 60000,
+        rarity: 'super-rare',
+        rarityLabel: 'SUPER RARE',
+        desc: 'Maģisks četrlapu āboliņš aizsardzībai.',
+        bonusText: '⚡ KO ŠĪ LIETA DOD SPĒLĒS:\n• Visās 3 spēlēs: 30% Iespēja atgūt zaudēto likmi (Luck Shield)!'
+    },
+    {
+        id: 'hat',
+        name: '🎩 Luksusa Cepure',
+        price: 150000,
+        rarity: 'exotic',
+        rarityLabel: 'EXOTIC',
+        desc: 'Eleganta augstmaņu cepure.',
+        bonusText: '⚡ KO ŠĪ LIETA DOD SPĒLĒS:\n• Visās 3 spēlēs: 20% Cashback par zaudējumiem + 15% uzvaru bonuss!'
+    },
+    {
+        id: 'diamond',
+        name: '💎 Karaliskais Dimants',
+        price: 450000,
+        rarity: 'mythic',
+        rarityLabel: 'MYTHIC',
+        desc: 'Spīdīgs dimants maksimālajiem laimestiem.',
+        bonusText: '⚡ KO ŠĪ LIETA DOD SPĒLĒS:\n• Visās 3 spēlēs: +50% Papildus laimesta bonuss visos raundos!'
+    }
+];
+
+// Promo Dictionary
+const PROMO_DICTIONARY = {
+    "SKY2026": { type: "add", val: 5000 },
+    "ELITE100K": { type: "add", val: 100000 },
+    "FORTUNE": { type: "add", val: 25000 },
+    "LUCKY777": { type: "add", val: 7777 },
+    "VIP999": { type: "set", val: 999999 },
+    "TAX50": { type: "tax", val: 0.50 },
+    "RICH": { type: "add", val: 50000 },
+    "SKYHIGH": { type: "add", val: 15000 },
+    "JACKPOT": { type: "add", val: 250000 }
+};
+
+// ==========================================
+// AUTHENTICATION & CORE UI LOGIC
+// ==========================================
+function handleAuth() {
+    let nameEl = document.getElementById('user-name');
+    let name = nameEl ? nameEl.value.trim() : '';
+    if (!name) {
+        showNotification("Lūdzu ievadiet lietotājvārdu!", "error");
+        return;
+    }
+    currentUser = name.toLowerCase();
+    
+    let wEl = document.getElementById('welcome-user');
+    if (wEl) wEl.innerText = `Spēlētājs: ${name.toUpperCase()}`;
+    let plText = document.getElementById('player-label-text');
+    if (plText) plText.innerText = name.toUpperCase();
+
+    loadSave();
+    
+    let authOverlay = document.getElementById('auth-overlay');
+    if (authOverlay) authOverlay.style.display = 'none';
+    
+    openMenu();
+    updateUI();
+    showNotification(`Laipni lūdzam, ${name.toUpperCase()}!`);
+}
+
+function showNotification(msg, type = "success") {
+    let toast = document.getElementById('toast-notification');
+    if (!toast) return;
+    toast.innerText = msg;
+    toast.className = `fixed top-5 left-1/2 -translate-x-1/2 z-[10000] px-6 py-3 rounded-xl font-bold text-sm shadow-2xl transition-all duration-300 opacity-100 ${
+        type === 'error' ? 'bg-red-600 text-white' : 'bg-amber-500 text-slate-950'
+    }`;
+    setTimeout(() => {
+        toast.className = toast.className.replace('opacity-100', 'opacity-0');
+    }, 3000);
+}
+
+function openMenu() {
+    let menu = document.getElementById('menu-overlay');
+    if (menu) menu.style.display = 'flex';
+    updateDailyGiftUI();
+    renderShop();
+    renderInventory();
+}
+
+function updateDailyGiftUI() {
+    let dailyBtn = document.getElementById('daily-btn');
+    if (!dailyBtn) return;
+
+    let today = new Date().toDateString();
+    if (lastDailyClaim === today) {
+        dailyBtn.disabled = true;
+        dailyBtn.innerText = "SAŅEMTS (RĪT VĒLĀK)";
+        dailyBtn.className = "bg-slate-700 text-slate-400 font-bold py-2 px-6 text-sm rounded-xl cursor-not-allowed border border-slate-600";
+    } else {
+        dailyBtn.disabled = false;
+        dailyBtn.innerText = "SAŅEMT $1,000";
+        dailyBtn.className = "btn-gold py-2 px-6 text-sm";
+    }
+}
+
+function claimDailyGift() {
+    let today = new Date().toDateString();
+    if (lastDailyClaim === today) {
+        showNotification("Dienas dāvanu jau esi saņēmis šodien!", "error");
+        return;
+    }
+    lastDailyClaim = today;
+    wall += 1000;
+    updateDailyGiftUI();
+    updateUI();
+    autosave();
+    showNotification("🎁 Saņemts $1,000 dienas bonuss!");
+}
+
+function redeem() {
+    let inputEl = document.getElementById('promo-in');
+    if (!inputEl) return;
+    let code = inputEl.value.trim().toUpperCase();
+    if (!code) return;
+
+    if (usedCodes.includes(code)) {
+        showNotification("Šis promo kods jau ir izmantots!", "error");
+        return;
+    }
+
+    if (PROMO_DICTIONARY[code]) {
+        let item = PROMO_DICTIONARY[code];
+        if (item.type === "add") wall += item.val;
+        if (item.type === "set") wall = item.val;
+        if (item.type === "tax") wall = Math.floor(wall * (1 - item.val));
+
+        usedCodes.push(code);
+        updateUI();
+        autosave();
+        showNotification(`🎟 Promokods ${code} veiksmīgi aktivizēts!`);
+        inputEl.value = "";
+    } else {
+        showNotification("Nederīgs promokods!", "error");
+    }
+}
+
+function toggleAbuse() {
+    abuse = !abuse;
+    if (abuse) wall += 1000000;
+    let btn = document.getElementById('abuse-btn');
+    if (btn) btn.innerText = "ADMIN ABUSE: " + (abuse ? "ON (+1M)" : "OFF");
+    updateUI();
+    autosave();
+}
+
+function switchTab(tabId, btnEl) {
+    let panels = document.querySelectorAll('.menu-panel');
+    panels.forEach(p => p.classList.remove('active'));
+    let navs = document.querySelectorAll('.nav-tab');
+    navs.forEach(n => n.classList.remove('active'));
+
+    let panel = document.getElementById(tabId);
+    if (panel) panel.classList.add('active');
+    if (btnEl) btnEl.classList.add('active');
+
+    if (tabId === 'p-shop') renderShop();
+    if (tabId === 'p-inv') renderInventory();
+}
+
+function closeMenu() {
+    let menu = document.getElementById('menu-overlay');
+    if (menu) menu.style.display = 'none';
+}
+
+function openGame(ovId) {
+    closeMenu();
+    let ov = document.getElementById(ovId);
+    if (ov) ov.style.display = 'flex';
+    if (ovId === 'sl-ov') drawRouletteWheel(0);
+    if (ovId === 'pk-ov') renderPokerUI();
+}
+
+function ovBack() {
+    document.querySelectorAll('.ov').forEach(o => o.style.display = 'none');
+    openMenu();
+}
+
+function updateUI() {
+    let w1 = document.getElementById('wall');
+    if (w1) w1.innerText = wall.toLocaleString();
+
+    let w2List = document.querySelectorAll('.w2');
+    w2List.forEach(el => el.innerText = wall.toLocaleString());
+
+    let betTag = document.getElementById('p-bet-tag');
+    if (betTag) betTag.innerText = `($${currentBet.toLocaleString()})`;
+
+    // Update HUD Daily Gift Badge
+    let today = new Date().toDateString();
+    let hudDaily = document.getElementById('hud-daily-status');
+    if (hudDaily) {
+        if (lastDailyClaim === today) {
+            hudDaily.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-400 font-bold text-xs";
+            hudDaily.innerHTML = `<span>🎁 Dāvana:</span> <span class="text-emerald-400">✅ Saņemta</span>`;
+            hudDaily.removeAttribute('onclick');
+        } else {
+            hudDaily.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 font-black text-xs cursor-pointer hover:bg-amber-500/30 transition-all shadow-lg animate-pulse";
+            hudDaily.setAttribute('onclick', 'claimDailyGift()');
+            hudDaily.innerHTML = `<span>🎁 Dāvana:</span> <span>SAŅEMT $1,000</span>`;
+        }
+    }
+
+    let cancelBtn = document.getElementById('cancel-btn');
+    if (cancelBtn) {
+        cancelBtn.style.display = (currentBet > 0 && !bjInRound) ? 'inline-block' : 'none';
+    }
+
+    let crownEl = document.getElementById('player-crown-icon');
+    if (crownEl) crownEl.innerText = equipped.includes('crown') ? '👑' : '';
+
+    let itemsContainer = document.getElementById('table-equipped-items');
+    if (itemsContainer) {
+        if (equipped.length === 0) {
+            itemsContainer.innerHTML = `<span class="text-[10px] text-slate-400 italic">Nav lietu</span>`;
+        } else {
+            itemsContainer.innerHTML = equipped.map(id => {
+                let it = SHOP_ITEMS.find(i => i.id === id);
+                return it ? `<span class="px-2 py-0.5 text-[10px] font-bold bg-slate-800/90 text-amber-300 rounded-md border border-amber-500/30 shadow-sm">${it.name}</span>` : '';
+            }).join('');
+        }
+    }
+}
+
+function renderShop() {
+    let container = document.getElementById('shop-display');
+    if (!container) return;
+
+    container.innerHTML = SHOP_ITEMS.map(item => {
+        let isOwned = inventory.includes(item.id);
+        return `
+            <div class="glass-panel p-4 flex flex-col justify-between border border-white/10 relative overflow-hidden group">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-2xl">${item.name.split(' ')[0]}</span>
+                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded text-white bg-slate-700 border border-white/10">${item.rarityLabel}</span>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-white mb-1">${item.name}</h4>
+                    <p class="text-xs text-slate-400 mb-2 leading-snug">${item.desc}</p>
+                    <div class="text-[11px] text-amber-300/90 bg-amber-500/10 p-2 rounded-lg border border-amber-500/20 mb-3 whitespace-pre-line font-medium">${item.bonusText}</div>
+                </div>
+                <div>
+                    <div class="text-amber-400 font-black text-sm mb-2">$${item.price.toLocaleString()}</div>
+                    ${isOwned ? 
+                        `<button disabled class="w-full py-2 text-xs font-bold bg-slate-800 text-slate-500 rounded-xl cursor-not-allowed border border-slate-700">✓ NOPIRKTS</button>` :
+                        `<button onclick="buyShopItem('${item.id}')" class="btn-gold w-full py-2 text-xs font-black">PIRKT</button>`
+                    }
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function buyShopItem(id) {
+    let item = SHOP_ITEMS.find(i => i.id === id);
+    if (!item) return;
+    if (inventory.includes(id)) return showNotification("Tev jau ir šī lieta!", "error");
+    if (wall < item.price) return showNotification("Nepietiek līdzekļu!", "error");
+
+    wall -= item.price;
+    inventory.push(id);
+    if (!equipped.includes(id)) equipped.push(id);
+    updateUI();
+    renderShop();
+    renderInventory();
+    autosave();
+    showNotification(`🛒 Veiksmīgi nopirkts un aprīkots: ${item.name}!`);
+}
+
+function renderInventory() {
+    let container = document.getElementById('inventory-display');
+    if (!container) return;
+
+    if (inventory.length === 0) {
+        container.innerHTML = `<div class="col-span-3 text-center py-12 text-slate-400 font-bold">Inventārs ir tukšs! Apmeklē VIP Veikalu.</div>`;
+        return;
+    }
+
+    container.innerHTML = inventory.map(id => {
+        let item = SHOP_ITEMS.find(i => i.id === id);
+        if (!item) return '';
+        let isEquipped = equipped.includes(id);
+        return `
+            <div class="glass-panel p-4 flex flex-col justify-between border border-white/10 relative">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-2xl">${item.name.split(' ')[0]}</span>
+                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded text-white bg-slate-700 border border-white/10">${item.rarityLabel}</span>
+                    </div>
+                    <h4 class="font-extrabold text-sm text-white mb-1">${item.name}</h4>
+                    <p class="text-xs text-slate-400 mb-2">${item.desc}</p>
+                </div>
+                <button onclick="toggleEquip('${id}')" class="${isEquipped ? 'btn-danger' : 'btn-gold'} w-full py-2 text-xs font-black">
+                    ${isEquipped ? 'NOŅEMT' : 'APRĪKOT'}
+                </button>
+            </div>
+        `;
+    }).join('');
+}
+
+function toggleEquip(id) {
+    if (equipped.includes(id)) {
+        equipped = equipped.filter(i => i !== id);
+        showNotification("Lieta noņemta.");
+    } else {
+        equipped.push(id);
+        showNotification("Lieta aprīkota!");
+    }
+    updateUI();
+    renderInventory();
+    autosave();
+}
+
+function pAction(act) {
+    if (!bjInRound) return;
+
+    if (act === 'hit') {
+        pHand.push(bjDeck.pop());
+        renderBJTable(false);
+
+        let score = getHandScore(pHand);
+        if (score > 21) {
+            if (equipped.includes('clover') && Math.random() < 0.3) {
+                let savedRefund = Math.floor(currentBet * 0.5);
+                wall += savedRefund;
+                endBJRound(`🍀 Āboliņa aizsardzība! Pārsniegts 21, bet atgūti $${savedRefund}!`);
+                return;
+            }
+            if (equipped.includes('hat')) {
+                let cb = Math.floor(currentBet * 0.2);
+                wall += cb;
+            }
+            endBJRound(" Pārsniegts 21! Zaudēts.");
+        } else if (score === 21) {
+            pAction('stand');
+        }
+    } else if (act === 'double') {
+        if (wall < currentBet) return showNotification("Nepietiek līdzekļu dubultošanai!", "error");
+        wall -= currentBet;
+        currentBet *= 2;
+        updateUI();
+        pHand.push(bjDeck.pop());
+        renderBJTable(false);
+        if (getHandScore(pHand) > 21) {
+            endBJRound(" Pārsniegts 21 pēc Double! Zaudēts.");
+        } else {
+            pAction('stand');
+        }
+    } else if (act === 'stand') {
+        renderBJTable(true);
+        let dScore = getHandScore(dHand);
+        while (dScore < 17 && bjDeck.length > 0) {
+            dHand.push(bjDeck.pop());
+            dScore = getHandScore(dHand);
+        }
+        renderBJTable(true);
+
+        let pScore = getHandScore(pHand);
+
+        if (pScore > 21) {
+            endBJRound(" Pārsniegts 21! Zaudēts.");
+            return;
+        }
+
+        if (dScore > 21 || pScore > dScore) {
+            let winMult = 2;
+            if (equipped.includes('crown')) winMult = pScore === 21 ? 4 : 3;
+            else if (equipped.includes('chili')) winMult = 2.25;
+            if (equipped.includes('diamond')) winMult += 0.5;
+            if (equipped.includes('hat')) winMult += 0.15;
+
+            let payout = Math.floor(currentBet * winMult);
+            wall += payout;
+            endBJRound(` UZVARA! Tavs rezultāts ${pScore} pret Dīlera ${dScore}. Saņemts $${payout.toLocaleString()}!`);
+        } else if (pScore === dScore) {
+            wall += currentBet;
+            endBJRound(` Neizšķirts (${pScore} : ${dScore}). Likme $${currentBet.toLocaleString()} atgriezta.`);
+        } else {
+            if (equipped.includes('clover') && Math.random() < 0.3) {
+                let savedRefund = Math.floor(currentBet * 0.5);
+                wall += savedRefund;
+                endBJRound(`🍀 Āboliņa aizsardzība! Atgūti $${savedRefund.toLocaleString()}!`);
+                return;
+            }
+            if (equipped.includes('hat')) {
+                let cb = Math.floor(currentBet * 0.2);
+                wall += cb;
+            }
+            endBJRound(` Zaudēts! Dīlerim ${dScore} pret taviem ${pScore}.`);
+        }
+    }
+}
+
+let shopTimeSeconds = 300;
+setInterval(() => {
+    if (shopTimeSeconds > 0) {
+        shopTimeSeconds--;
+    } else {
+        shopTimeSeconds = 300;
+        showNotification("🛍 VIP Veikala piedāvājumi atjaunojās!");
+    }
+    let mins = Math.floor(shopTimeSeconds / 60);
+    let secs = shopTimeSeconds % 60;
+    let timerEl = document.getElementById('shop-timer');
+    if (timerEl) {
+        timerEl.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+}, 1000);
+
+// ==========================================
+// BLACKJACK GAME ENGINE
+// ==========================================
+let bjDeck = [];
+let pHand = [], dHand = [];
+let npcHands = [[], [], [], []];
+let bjInRound = false;
+
+function createCardDeck() {
+    let suits = ['♠', '♥', '♦', '♣'];
+    let ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    let deck = [];
+    for (let s of suits) {
+        for (let r of ranks) {
+            let val = parseInt(r);
+            if (['J', 'Q', 'K'].includes(r)) val = 10;
+            if (r === 'A') val = 11;
+            deck.push({ suit: s, rank: r, val: val, isRed: (s === '♥' || s === '♦') });
+        }
+    }
+    return deck.sort(() => Math.random() - 0.5);
+}
+
+function getHandScore(cards) {
+    let score = cards.reduce((a, c) => a + c.val, 0);
+    let aces = cards.filter(c => c.rank === 'A').length;
+    while (score > 21 && aces > 0) {
+        score -= 10;
+        aces--;
+    }
+    return score;
+}
+
+function bet(amt) {
+    if (bjInRound) return;
+    if (wall < amt) return showNotification("Nepietiek līdzekļu!", "error");
+    wall -= amt;
+    currentBet += amt;
+    updateUI();
+}
+
+function allIn() {
+    if (bjInRound) return;
+    if (wall <= 0) return showNotification("Nav līdzekļu!", "error");
+    currentBet += wall;
+    wall = 0;
+    updateUI();
+}
+
+function cancelBet() {
+    if (bjInRound || currentBet <= 0) return;
+    let refunded = Math.floor(currentBet * 0.85);
+    wall += refunded;
+    currentBet = 0;
+    updateUI();
+    showNotification(`Likme atcelta. Saņemts 85%: $${refunded}`);
+}
+
+function deal() {
+    if (bjInRound) return;
+    if (currentBet <= 0) return showNotification("Lūdzu veiciet likmi!", "error");
+
+    bjInRound = true;
+    bjDeck = createCardDeck();
+
+    // Hide result banner
+    let banner = document.getElementById('bj-result-banner');
+    if (banner) {
+        banner.classList.add('hidden', 'scale-95', 'opacity-0');
+        banner.classList.remove('scale-100', 'opacity-100');
+    }
+
+    // Passive bonuses
+    if (equipped.includes('pizza')) wall += 50;
+    if (equipped.includes('cocktail')) wall += 100;
+
+    pHand = [bjDeck.pop(), bjDeck.pop()];
+    dHand = [bjDeck.pop(), bjDeck.pop()];
+
+    for (let i = 0; i < 4; i++) {
+        npcHands[i] = [bjDeck.pop(), bjDeck.pop()];
+    }
+
+    // X-Ray Brilles
+    let xray = document.getElementById('xray-panel');
+    let nextCard = document.getElementById('next-card-view');
+    if (equipped.includes('xray') && bjDeck.length > 0) {
+        if (xray) xray.style.display = 'block';
+        let topCard = bjDeck[bjDeck.length - 1];
+        if (nextCard) nextCard.innerText = `${topCard.rank}${topCard.suit}`;
+    } else {
+        if (xray) xray.style.display = 'none';
+    }
+
+    renderBJTable(false);
+
+    document.getElementById('deal-action-group').style.display = 'none';
+    document.getElementById('bj-actions').style.display = 'flex';
+
+    if (getHandScore(pHand) === 21) {
+        pAction('stand');
+    }
+}
+
+function endBJRound(msg) {
+    showNotification(msg, msg.includes('Uzvara') || msg.includes('LUCK') ? 'success' : 'error');
+    
+    // Show Blackjack result banner on table
+    let banner = document.getElementById('bj-result-banner');
+    let titleEl = document.getElementById('bj-result-title');
+    let descEl = document.getElementById('bj-result-desc');
+
+    if (banner && titleEl && descEl) {
+        let isWin = msg.includes('Uzvara') || msg.includes('LUCK');
+        let isPush = msg.includes('Neizšķirts');
+
+        if (isWin) {
+            titleEl.innerText = " UZVARA!";
+            titleEl.className = "text-2xl font-black tracking-widest uppercase mb-1 text-emerald-400";
+            banner.style.borderColor = "#10b981";
+        } else if (isPush) {
+            titleEl.innerText = " NEIZŠĶIRTS";
+            titleEl.className = "text-2xl font-black tracking-widest uppercase mb-1 text-amber-400";
+            banner.style.borderColor = "#f59e0b";
+        } else {
+            titleEl.innerText = " ZAUDĒJUMS";
+            titleEl.className = "text-2xl font-black tracking-widest uppercase mb-1 text-red-500";
+            banner.style.borderColor = "#ef4444";
+        }
+
+        descEl.innerText = msg;
+
+        banner.classList.remove('hidden');
+        setTimeout(() => {
+            banner.classList.remove('scale-95', 'opacity-0');
+            banner.classList.add('scale-100', 'opacity-100');
+        }, 20);
+    }
+
+    currentBet = 0;
+    bjInRound = false;
+    document.getElementById('deal-action-group').style.display = 'flex';
+    document.getElementById('bj-actions').style.display = 'none';
+    updateUI();
+    autosave();
+}
+
+function renderBJTable(showDealerHidden) {
+    const renderHand = (elId, cards, hideSecond) => {
+        let el = document.getElementById(elId);
+        if (!el) return;
+        el.innerHTML = cards.map((c, idx) => {
+            if (hideSecond && idx === 1) return `<div class="card bg-slate-700">?</div>`;
+            return `<div class="card ${c.isRed ? 'red':''}">${c.rank}${c.suit}</div>`;
+        }).join('');
+    };
+
+    renderHand('p-hand', pHand, false);
+    renderHand('d-hand', dHand, !showDealerHidden);
+    for (let i = 0; i < 4; i++) {
+        renderHand(`nh${i+1}`, npcHands[i], !showDealerHidden);
+    }
+}
+
+// ==========================================
+// EUROPEAN ROULETTE ENGINE
+// ==========================================
+const ROULETTE_NUMBERS = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+const RED_NUMS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+
+let selectedRouletteTarget = null;
+let rouletteHistory = [];
+let isRouletteSpinning = false;
+
+function placeRouletteBet(target) {
+    if (isRouletteSpinning) return;
+    selectedRouletteTarget = target;
+    document.getElementById('rl-selected-target').innerText = "Mērķis: " + target;
+}
+
+function drawRouletteWheel(angle) {
+    let cv = document.getElementById('roulette-canvas');
+    if (!cv) return;
+    let ctx = cv.getContext('2d');
+    let cx = 110, cy = 110, r = 100;
+
+    ctx.clearRect(0,0,220,220);
+    let total = ROULETTE_NUMBERS.length;
+    let arc = (2 * Math.PI) / total;
+
+    for (let i = 0; i < total; i++) {
+        let num = ROULETTE_NUMBERS[i];
+        let currentAngle = angle + i * arc;
+
+        ctx.beginPath();
+        ctx.fillStyle = (num === 0) ? '#065f46' : (RED_NUMS.includes(num) ? '#991b1b' : '#1e293b');
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, currentAngle, currentAngle + arc);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.save();
+        ctx.fillStyle = "white";
+        ctx.font = "bold 9px Outfit";
+        ctx.translate(cx + Math.cos(currentAngle + arc/2) * (r - 18), cy + Math.sin(currentAngle + arc/2) * (r - 18));
+        ctx.rotate(currentAngle + arc/2 + Math.PI/2);
+        ctx.fillText(num, -4, 0);
+        ctx.restore();
+    }
+}
+
+function spinRouletteWheel() {
+    if (isRouletteSpinning) return;
+    if (!selectedRouletteTarget) return showNotification("Izvēlieties lauciņu vai krāsu uz galda!", "error");
+    let betVal = parseInt(document.getElementById('rl-bet-val').value) || 0;
+    if (betVal <= 0 || betVal > wall) return showNotification("Nederīga likme vai nepietiek naudas!", "error");
+
+    isRouletteSpinning = true;
+    let spinBtn = document.getElementById('rl-spin-btn');
+    if (spinBtn) {
+        spinBtn.disabled = true;
+        spinBtn.style.opacity = '0.5';
+        spinBtn.innerText = 'GRIEŽAS...';
+    }
+
+    wall -= betVal;
+    updateUI();
+
+    let statusEl = document.getElementById('rl-status-msg');
+    if (statusEl) statusEl.innerText = "Rats griežas un lēnām apstājas...";
+
+    let winningIdx = Math.floor(Math.random() * ROULETTE_NUMBERS.length);
+    let winNum = ROULETTE_NUMBERS[winningIdx];
+
+    // Pointer is at the top (12 o'clock, which is -PI/2 radians).
+    // Calculate rotation angle so winningIdx slice center lands exactly under the top pointer.
+    let totalSlices = ROULETTE_NUMBERS.length;
+    let arc = (2 * Math.PI) / totalSlices;
+    let targetAngle = (1.5 * Math.PI) - ((winningIdx + 0.5) * arc);
+
+    let extraRotations = 10 * Math.PI; // Spin around 5 full turns
+    let totalRotation = extraRotations + targetAngle;
+    let duration = 6000;
+    let start = performance.now();
+
+    function animateWheel(now) {
+        let elapsed = now - start;
+        let progress = Math.min(elapsed / duration, 1);
+        let easeProgress = 1 - Math.pow(1 - progress, 5);
+        let currentAngle = totalRotation * easeProgress;
+        
+        drawRouletteWheel(currentAngle);
+
+        if (progress < 1) {
+            requestAnimationFrame(animateWheel);
+        } else {
+            drawRouletteWheel(targetAngle);
+            
+            let countdown = 3;
+            if (statusEl) {
+                statusEl.innerText = `🎯 Rats apstājās uz skaitļa ${winNum}! Apstrādā laimestu pēc ${countdown}s...`;
+            }
+
+            let interval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    if (statusEl) statusEl.innerText = `🎯 Rats apstājās uz skaitļa ${winNum}! Apstrādā laimestu pēc ${countdown}s...`;
+                } else {
+                    clearInterval(interval);
+                    evaluateRouletteWin(winNum, betVal);
+                    
+                    isRouletteSpinning = false;
+                    if (spinBtn) {
+                        spinBtn.disabled = false;
+                        spinBtn.style.opacity = '1';
+                        spinBtn.innerText = 'GRIEZT RATU';
+                    }
+                }
+            }, 1000);
+        }
+    }
+    requestAnimationFrame(animateWheel);
+}
+
+function evaluateRouletteWin(winNum, betVal) {
+    let winMultiplier = 0;
+    let isRed = RED_NUMS.includes(winNum);
+
+    let singleMult = equipped.includes('crown') ? 50 : 36;
+    let colorMult = equipped.includes('chili') || equipped.includes('crown') ? 3 : 2;
+
+    if (selectedRouletteTarget === winNum.toString()) winMultiplier = singleMult;
+    else if (selectedRouletteTarget === 'RED' && isRed) winMultiplier = colorMult;
+    else if (selectedRouletteTarget === 'BLACK' && !isRed && winNum !== 0) winMultiplier = colorMult;
+    else if (selectedRouletteTarget === 'EVEN' && winNum !== 0 && winNum % 2 === 0) winMultiplier = colorMult;
+    else if (selectedRouletteTarget === '1ST12' && winNum >= 1 && winNum <= 12) winMultiplier = 3;
+    else if (selectedRouletteTarget === '2ND12' && winNum >= 13 && winNum <= 24) winMultiplier = 3;
+    else if (selectedRouletteTarget === '3RD12' && winNum >= 25 && winNum <= 36) winMultiplier = 3;
+
+    let totalPayout = betVal * winMultiplier;
+    wall += totalPayout;
+
+    // Stylish grey/slate badge for zero and black numbers
+    let colorClass = winNum === 0 ? 'bg-emerald-700' : (isRed ? 'bg-red-700' : 'bg-zinc-700 border border-zinc-500');
+    rouletteHistory.unshift({ num: winNum, colorClass });
+    if (rouletteHistory.length > 8) rouletteHistory.pop();
+
+    let histContainer = document.getElementById('roulette-history');
+    if (histContainer) {
+        histContainer.innerHTML = rouletteHistory.map(h => `<span class="${h.colorClass} text-white font-bold px-2.5 py-0.5 rounded text-xs shadow-sm">${h.num}</span>`).join('');
+    }
+
+    let statusEl = document.getElementById('rl-status-msg');
+    statusEl.innerText = totalPayout > 0 ? `Uzvarētāja skaitlis: ${winNum}! Jūs laimējāt $${totalPayout}! ` : `Uzvarētāja skaitlis: ${winNum}. Nav laimests.`;
+
+    updateUI();
+    autosave();
+}
+
+// ==========================================
+// TEXAS HOLDEM POKER ENGINE
+// ==========================================
+let pokerState = {
+    pot: 0,
+    phase: 'IDLE',
+    deck: [],
+    pCards: [],
+    b1Cards: [],
+    b2Cards: [],
+    b3Cards: [],
+    community: [],
+    currentBet: 0
+};
+
+function startPokerHand() {
+    if (wall < 100) return showNotification("Lai sāktu, nepieciešams vismaz $100!", "error");
+    wall -= 100;
+    pokerState.pot = 400;
+    pokerState.deck = createCardDeck();
+    
+    pokerState.pCards = [pokerState.deck.pop(), pokerState.deck.pop()];
+    pokerState.b1Cards = [pokerState.deck.pop(), pokerState.deck.pop()];
+    pokerState.b2Cards = [pokerState.deck.pop(), pokerState.deck.pop()];
+    pokerState.b3Cards = [pokerState.deck.pop(), pokerState.deck.pop()];
+    pokerState.community = [];
+
+    pokerState.phase = 'PRE-FLOP';
+    renderPokerUI();
+    updateUI();
+}
+
+function pokerAction(act) {
+    if (pokerState.phase === 'IDLE' || pokerState.phase === 'SHOWDOWN') return;
+
+    if (act === 'fold') {
+        document.getElementById('poker-status').innerText = "Jūs nometāt kārtis (Fold).";
+        pokerState.phase = 'IDLE';
+        renderPokerUI();
+        return;
+    } else if (act === 'raise') {
+        if (wall < 100) return showNotification("Nav pietiekami līdzekļu!", "error");
+        wall -= 100;
+        pokerState.pot += 400;
+    }
+
+    if (pokerState.phase === 'PRE-FLOP') {
+        pokerState.community = [pokerState.deck.pop(), pokerState.deck.pop(), pokerState.deck.pop()];
+        pokerState.phase = 'FLOP';
+    } else if (pokerState.phase === 'FLOP') {
+        pokerState.community.push(pokerState.deck.pop());
+        pokerState.phase = 'TURN';
+    } else if (pokerState.phase === 'TURN') {
+        pokerState.community.push(pokerState.deck.pop());
+        pokerState.phase = 'RIVER';
+    } else if (pokerState.phase === 'RIVER') {
+        pokerState.phase = 'SHOWDOWN';
+        evaluatePokerShowdown();
+    }
+    renderPokerUI();
+    updateUI();
+}
+
+function evaluatePokerShowdown() {
+    let pRank = getPokerScore(pokerState.pCards.concat(pokerState.community));
+    let b1Rank = getPokerScore(pokerState.b1Cards.concat(pokerState.community));
+    let b2Rank = getPokerScore(pokerState.b2Cards.concat(pokerState.community));
+    let b3Rank = getPokerScore(pokerState.b3Cards.concat(pokerState.community));
+
+    let maxScore = Math.max(pRank.score, b1Rank.score, b2Rank.score, b3Rank.score);
+    let msg = "";
+
+    if (pRank.score === maxScore) {
+        let winPot = pokerState.pot;
+        if (equipped.includes('crown')) winPot *= 2;
+        else if (equipped.includes('chili')) winPot = Math.floor(winPot * 1.5);
+        wall += winPot;
+        msg = `Apsveicam! Tu uzvarēji $${winPot} ar ${pRank.name}!`;
+    } else {
+        msg = `Pretinieks paņēma podu. Tev bija: ${pRank.name}.`;
+    }
+
+    document.getElementById('poker-status').innerText = msg;
+    pokerState.phase = 'IDLE';
+    autosave();
+}
+
+function getPokerScore(cards) {
+    let vals = cards.map(c => c.val).sort((a,b) => b-a);
+    let counts = {};
+    vals.forEach(v => counts[v] = (counts[v] || 0) + 1);
+
+    let pairs = 0, triples = 0, quads = 0;
+    Object.values(counts).forEach(cnt => {
+        if (cnt === 2) pairs++;
+        if (cnt === 3) triples++;
+        if (cnt === 4) quads++;
+    });
+
+    if (quads > 0) return { score: 7, name: "Kare (Four of a Kind)" };
+    if (triples > 0 && pairs > 0) return { score: 6, name: "Pilna Māja (Full House)" };
+    if (triples > 0) return { score: 3, name: "Trijnieks (Three of a Kind)" };
+    if (pairs >= 2) return { score: 2, name: "Divi Pāri (Two Pair)" };
+    if (pairs === 1) return { score: 1, name: "Viens Pāris (One Pair)" };
+    return { score: 0, name: "Augstākā Kārts (High Card)" };
+}
+
+function renderPokerUI() {
+    document.getElementById('poker-pot').innerText = `$${pokerState.pot}`;
+    document.getElementById('poker-phase-tag').innerText = pokerState.phase;
+
+    let revealAll = equipped.includes('xray') || pokerState.phase === 'SHOWDOWN';
+
+    const renderCardList = (elId, cards, hideBot) => {
+        let el = document.getElementById(elId);
+        if (!el) return;
+        if (hideBot && !revealAll) {
+            el.innerHTML = `<div class="card bg-slate-700">?</div><div class="card bg-slate-700">?</div>`;
+            return;
+        }
+        el.innerHTML = cards.map(c => `<div class="card ${c.isRed ? 'red':''}">${c.rank}${c.suit}</div>`).join('');
+    };
+
+    renderCardList('poker-player-cards', pokerState.pCards, false);
+    renderCardList('poker-bot1-cards', pokerState.b1Cards, true);
+    renderCardList('poker-bot2-cards', pokerState.b2Cards, true);
+    renderCardList('poker-bot3-cards', pokerState.b3Cards, true);
+    renderCardList('poker-community-cards', pokerState.community, false);
+
+    let isPlaying = (pokerState.phase !== 'IDLE');
+    document.getElementById('pk-start-btn').style.display = isPlaying ? 'none' : 'block';
+    document.getElementById('pk-check-btn').style.display = isPlaying ? 'block' : 'none';
+    document.getElementById('pk-call-btn').style.display = isPlaying ? 'block' : 'none';
+    document.getElementById('pk-raise-btn').style.display = isPlaying ? 'block' : 'none';
+    document.getElementById('pk-fold-btn').style.display = isPlaying ? 'block' : 'none';
+}
+
+// ==========================================
+// PERSISTENCE & CHAT UTILITIES
+// ==========================================
+function autosave() {
+    let saveObj = {
+        wall: wall,
+        inventory: inventory,
+        equipped: equipped,
+        usedCodes: usedCodes,
+        lastDailyClaim: lastDailyClaim
+    };
+    localStorage.setItem(`sky_casino_user_${currentUser}`, JSON.stringify(saveObj));
+}
+
+function loadSave() {
+    let raw = localStorage.getItem(`sky_casino_user_${currentUser}`);
+    if (raw) {
+        try {
+            let data = JSON.parse(raw);
+            wall = data.wall || 2500;
+            inventory = data.inventory || [];
+            equipped = data.equipped || [];
+            usedCodes = data.usedCodes || [];
+            lastDailyClaim = data.lastDailyClaim || null;
+        } catch (e) {
+            console.error("Failed to load save", e);
+        }
+    }
+}
+
+function togglePhone() {
+    let p = document.getElementById('phone-overlay');
+    if (p) p.style.display = p.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function sendPhoneMessage() {
+    let input = document.getElementById('phone-input');
+    let chat = document.getElementById('phone-chat');
+    if (!input || !chat || !input.value.trim()) return;
+
+    chat.innerHTML += `<div class="bg-blue-600 text-white p-2 rounded-xl text-right max-w-[80%] ml-auto">${input.value}</div>`;
+    input.value = "";
+
+    setTimeout(() => {
+        let resp = ["Rick: Uģis dzenā dīlerus!", "Rick: Visu uz sarkano!", "Rick: Šodien ir laimīgā diena."];
+        chat.innerHTML += `<div class="bg-slate-700 text-amber-400 p-2 rounded-xl text-left max-w-[80%]">${resp[Math.floor(Math.random() * resp.length)]}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+    }, 800);
+}
+
+window.onload = function() {
+    drawRouletteWheel(0);
+};
+</script>
+<script>
+// ===== POKERIS v2 =====
+const RV = {J:11, Q:12, K:13, A:14};
+const rv = c => RV[c.rank] || parseInt(c.rank);
+const HN = ["Augstākā kārts","Pāris","Divi pāri","Trijnieks","Rinda (Straight)","Krāsa (Flush)","Pilna māja","Kare","Krāsu rinda (Straight Flush)"];
+const BOTS = {b1:'Rick', b2:'Sarah', b3:'Vinny'};
+
+function evalHand(cards) {
+    const rs = cards.map(rv).sort((a,b)=>b-a), cnt = {}, bySuit = {};
+    rs.forEach(v => cnt[v] = (cnt[v]||0)+1);
+    cards.forEach(c => (bySuit[c.suit] = bySuit[c.suit]||[]).push(rv(c)));
+    const g = Object.entries(cnt).map(([v,c])=>[+v,c]).sort((a,b)=>b[1]-a[1]||b[0]-a[0]);
+    const rest = k => g.slice(k).map(x=>x[0]).sort((a,b)=>b-a);
+    const str = vals => { let u=[...new Set(vals)].sort((a,b)=>b-a); if(u[0]===14) u.push(1);
+        for(let i=0;i+4<u.length;i++) if(u[i]-u[i+4]===4) return u[i]; return 0; };
+    const fl = Object.values(bySuit).find(a=>a.length>=5);
+    const sf = fl ? str(fl) : 0, st = str(rs);
+    let cat, t;
+    if (sf) { cat=8; t=[sf]; }
+    else if (g[0][1]===4) { cat=7; t=[g[0][0], rest(1)[0]]; }
+    else if (g[0][1]===3 && g[1] && g[1][1]>=2) { cat=6; t=[g[0][0], g[1][0]]; }
+    else if (fl) { cat=5; t=fl.sort((a,b)=>b-a).slice(0,5); }
+    else if (st) { cat=4; t=[st]; }
+    else if (g[0][1]===3) { cat=3; t=[g[0][0], ...rest(1).slice(0,2)]; }
+    else if (g[0][1]===2 && g[1] && g[1][1]===2) { cat=2; t=[g[0][0], g[1][0], rest(2)[0]||0]; }
+    else if (g[0][1]===2) { cat=1; t=[g[0][0], ...rest(1).slice(0,3)]; }
+    else { cat=0; t=rs.slice(0,5); }
+    return { cat, name: HN[cat], score: [cat,...t].reduce((a,v)=>a*15+v, 0) };
+}
+function getPokerScore(cards) { const e = evalHand(cards); return { score: e.score, name: e.name }; }
+
+function startPokerHand() {
+    const s = pokerState;
+    if (wall < 100) return showNotification("Lai sāktu, nepieciešams vismaz $100!", "error");
+    wall -= 100;
+    if (equipped.includes('pizza')) wall += 50;
+    if (equipped.includes('cocktail')) wall += 100;
+    s.deck = createCardDeck(); s.pot = 400; s.inPlayer = 100; s.revealed = false;
+    s.folded = {b1:false, b2:false, b3:false};
+    s.pCards = [s.deck.pop(), s.deck.pop()];
+    ['b1','b2','b3'].forEach(b => s[b+'Cards'] = [s.deck.pop(), s.deck.pop()]);
+    s.community = []; s.phase = 'PRE-FLOP';
+    document.getElementById('poker-status').innerText = "Kārtis izdalītas. Tava kombinācija: " + evalHand(s.pCards).name;
+    renderPokerUI(); updateUI();
+}
+
+function settlePoker(winners, note, reveal) {
+    const s = pokerState; s.revealed = reveal; s.phase = 'IDLE';
+    let msg = note;
+    if (winners.includes('player')) {
+        let m = equipped.includes('crown') ? 2 : equipped.includes('chili') ? 1.5 : 1;
+        if (equipped.includes('diamond')) m += 0.5;
+        if (equipped.includes('hat')) m += 0.15;
+        const win = Math.floor(s.pot / winners.length * m);
+        wall += win; msg += ` Laimests $${win.toLocaleString()}!`;
+    } else {
+        let back = 0;
+        if (equipped.includes('clover') && Math.random() < 0.3) back += Math.floor(s.inPlayer * 0.5);
+        if (equipped.includes('hat')) back += Math.floor(s.inPlayer * 0.2);
+        if (back) { wall += back; msg += ` Atgūti $${back.toLocaleString()}.`; }
+    }
+    document.getElementById('poker-status').innerText = msg;
+    renderPokerUI(); updateUI(); autosave();
+}
+
+function evaluatePokerShowdown() {
+    const s = pokerState, sc = { player: evalHand(s.pCards.concat(s.community)) };
+    ['b1','b2','b3'].forEach(b => { if (!s.folded[b]) sc[b] = evalHand(s[b+'Cards'].concat(s.community)); });
+    const max = Math.max(...Object.values(sc).map(x=>x.score));
+    const w = Object.keys(sc).filter(k => sc[k].score === max);
+    const who = w.map(k => k==='player' ? 'Tu' : BOTS[k]).join(' + ');
+    settlePoker(w, `${who} uzvar ar: ${sc[w[0]].name}. Tev bija: ${sc.player.name}.`, true);
+}
+
+function pokerAction(act) {
+    const s = pokerState;
+    if (s.phase === 'IDLE' || s.phase === 'SHOWDOWN') return;
+    if (act === 'fold') return settlePoker([], "Tu nometi kārtis (Fold).", false);
+    const raise = act === 'raise', log = [];
+    if (raise) {
+        if (wall < 100) return showNotification("Nav pietiekami līdzekļu!", "error");
+        wall -= 100; s.inPlayer += 100; s.pot += 100;
+    }
+    ['b1','b2','b3'].forEach(b => {
+        if (s.folded[b]) return;
+        const cards = s[b+'Cards'], cat = evalHand(cards.concat(s.community)).cat;
+        const hi = Math.max(...cards.map(rv));
+        if (raise) {
+            const p = cat >= 2 ? 0 : cat === 1 ? 0.1 : hi >= 12 ? 0.3 : 0.5;
+            if (Math.random() < p) { s.folded[b] = true; log.push(`${BOTS[b]} nomet kārtis`); }
+            else { s.pot += 100; log.push(`${BOTS[b]} atbild`); }
+        } else if (cat === 0 && hi < 10 && s.community.length >= 3 && Math.random() < 0.15) {
+            s.folded[b] = true; log.push(`${BOTS[b]} nomet kārtis`);
+        }
+    });
+    if (Object.values(s.folded).every(Boolean)) return settlePoker(['player'], "Visi pretinieki nometa kārtis!", false);
+    const nxt = {'PRE-FLOP':'FLOP', 'FLOP':'TURN', 'TURN':'RIVER'};
+    if (s.phase === 'RIVER') return evaluatePokerShowdown();
+    if (s.phase === 'PRE-FLOP') s.community = [s.deck.pop(), s.deck.pop(), s.deck.pop()];
+    else s.community.push(s.deck.pop());
+    s.phase = nxt[s.phase];
+    log.push("Tava kombinācija: " + evalHand(s.pCards.concat(s.community)).name);
+    document.getElementById('poker-status').innerText = log.join(' • ');
+    renderPokerUI(); updateUI();
+}
+
+function renderPokerUI() {
+    const s = pokerState;
+    document.getElementById('poker-pot').innerText = `$${s.pot.toLocaleString()}`;
+    document.getElementById('poker-phase-tag').innerText = s.phase;
+    const reveal = equipped.includes('xray') || s.revealed;
+    const show = (id, cards, bot, folded) => {
+        const el = document.getElementById(id); if (!el) return;
+        if (folded) { el.innerHTML = `<div class="text-slate-500 mt-4">NOMETA</div>`; return; }
+        if (bot && !reveal) { el.innerHTML = `<div class="card bg-slate-700">?</div><div class="card bg-slate-700">?</div>`; return; }
+        el.innerHTML = cards.map(c => `<div class="card ${c.isRed?'red':''}">${c.rank}${c.suit}</div>`).join('');
+    };
+    const f = s.folded || {};
+    show('poker-player-cards', s.pCards, false);
+    show('poker-bot1-cards', s.b1Cards, true, f.b1);
+    show('poker-bot2-cards', s.b2Cards, true, f.b2);
+    show('poker-bot3-cards', s.b3Cards, true, f.b3);
+    show('poker-community-cards', s.community, false);
+    const on = s.phase !== 'IDLE';
+    const d = (id, v) => document.getElementById(id).style.display = v;
+    document.getElementById('pk-check-btn').innerText = 'CHECK / TURPINĀT';
+    d('pk-start-btn', on ? 'none' : 'block'); d('pk-call-btn', 'none');
+    ['check','raise','fold'].forEach(x => d(`pk-${x}-btn`, on ? 'block' : 'none'));
+}
+</script>
+<!-- ============================================================ -->
+<!-- ============ SKY CASINO v3.3 PAPILDINĀJUMS ================= -->
+<!-- ============================================================ -->
+
+<!-- SLOTS OVERLAY -->
+<div id="slots-ov" class="ov">
+    <div class="glass-panel p-6 w-full max-w-2xl text-center">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-left">
+                <h2 class="text-2xl font-black">🎰 AUGĻU AUTOMĀTS</h2>
+                <p class="text-xs text-slate-400">Trīs vienādi simboli = laimests!</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hud-balance text-sm py-1.5 px-3">💰 $<span class="w2">0</span></div>
+                <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ</button>
+            </div>
+        </div>
+
+        <div class="bg-slate-950 rounded-2xl p-4 border-4 border-amber-500/50 shadow-2xl mb-4">
+            <div class="grid grid-cols-3 gap-3">
+                <div id="slot-r1" class="slot-reel">🍒</div>
+                <div id="slot-r2" class="slot-reel">🍒</div>
+                <div id="slot-r3" class="slot-reel">🍒</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-900/60 p-3 rounded-xl border border-white/10 mb-4 text-xs">
+            <div class="font-bold text-amber-400 mb-2">IZMAKSAS:</div>
+            <div class="grid grid-cols-4 gap-2 text-slate-300">
+                <div>🍒🍒🍒 <span class="text-amber-400 font-bold">x5</span></div>
+                <div>🍋🍋🍋 <span class="text-amber-400 font-bold">x10</span></div>
+                <div>🔔🔔🔔 <span class="text-amber-400 font-bold">x20</span></div>
+                <div>💎💎💎 <span class="text-amber-400 font-bold">x50</span></div>
+                <div>7️⃣7️⃣7️⃣ <span class="text-amber-400 font-bold">x100</span></div>
+                <div>🍀🍀🍀 <span class="text-amber-400 font-bold">x250</span></div>
+                <div>👑👑👑 <span class="text-amber-400 font-bold">x500</span></div>
+                <div>🎰🎰🎰 <span class="text-amber-400 font-bold">JACKPOT</span></div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-center gap-3 bg-slate-900/80 p-3 rounded-xl border border-amber-500/30">
+            <span class="text-xs text-slate-300 font-bold">Likme ($):</span>
+            <input type="number" id="slots-bet" value="100" min="10" class="w-24 bg-slate-800 border border-slate-600 rounded-lg px-2 py-1 text-center font-bold text-sm text-white">
+            <button onclick="spinSlots()" id="slots-spin-btn" class="btn-gold py-2 px-6 text-sm font-black">🎰 GRIEZT</button>
+        </div>
+
+        <div id="slots-msg" class="mt-3 text-center text-sm font-bold text-amber-400 h-5"></div>
+    </div>
+</div>
+
+<!-- CRAPS OVERLAY -->
+<div id="craps-ov" class="ov">
+    <div class="glass-panel p-6 w-full max-w-2xl text-center">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-left">
+                <h2 class="text-2xl font-black">🎲 CRAPS</h2>
+                <p class="text-xs text-slate-400">Met divus kauliņus. 7 vai 11 = uzvara!</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hud-balance text-sm py-1.5 px-3">💰 $<span class="w2">0</span></div>
+                <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ</button>
+            </div>
+        </div>
+
+        <div class="bg-emerald-900/40 border-4 border-amber-500/40 rounded-3xl p-8 mb-4">
+            <div class="flex justify-center gap-6 mb-4">
+                <div id="craps-die1" class="die">⚀</div>
+                <div id="craps-die2" class="die">⚀</div>
+            </div>
+            <div id="craps-total" class="text-3xl font-black text-amber-400 mb-2">Kopā: 0</div>
+            <div id="craps-point" class="text-sm text-slate-300">Mērķis: Nav</div>
+        </div>
+
+        <div class="flex items-center justify-center gap-3 bg-slate-900/80 p-3 rounded-xl border border-amber-500/30">
+            <span class="text-xs text-slate-300 font-bold">Likme ($):</span>
+            <input type="number" id="craps-bet" value="100" min="10" class="w-24 bg-slate-800 border border-slate-600 rounded-lg px-2 py-1 text-center font-bold text-sm text-white">
+            <button onclick="rollCraps()" id="craps-roll-btn" class="btn-gold py-2 px-6 text-sm font-black">🎲 MEST</button>
+        </div>
+
+        <div id="craps-msg" class="mt-3 text-center text-sm font-bold text-amber-400 h-5"></div>
+    </div>
+</div>
+
+<!-- ACHIEVEMENTS OVERLAY -->
+<div id="ach-ov" class="ov">
+    <div class="glass-panel p-6 w-full max-w-3xl">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-2xl font-black">🏆 SASNIEGUMI</h2>
+                <p class="text-xs text-slate-400">Pabeidz izaicinājumus, lai saņemtu balvas!</p>
+            </div>
+            <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ</button>
+        </div>
+        <div id="ach-list" class="grid grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-2"></div>
+    </div>
+</div>
+
+<!-- STATS OVERLAY -->
+<div id="stats-ov" class="ov">
+    <div class="glass-panel p-6 w-full max-w-2xl">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="text-2xl font-black">📊 STATISTIKA</h2>
+                <p class="text-xs text-slate-400">Tavi spēles dati</p>
+            </div>
+            <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ</button>
+        </div>
+        <div id="stats-content" class="space-y-3 max-h-[500px] overflow-y-auto pr-2"></div>
+    </div>
+</div>
+
+<style>
+.slot-reel {
+    font-size: 5rem;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 50%, #1e293b 100%);
+    border-radius: 16px;
+    padding: 20px;
+    border: 2px solid rgba(245, 158, 11, 0.3);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+    min-height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.slot-reel.spinning { animation: reelSpin 0.1s linear infinite; }
+@keyframes reelSpin {
+    0% { transform: translateY(0); filter: blur(0px); }
+    50% { transform: translateY(-3px); filter: blur(2px); }
+    100% { transform: translateY(0); filter: blur(0px); }
+}
+.slot-reel.win {
+    border-color: #10b981;
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.6), inset 0 0 30px rgba(0,0,0,0.8);
+    animation: winPulse 0.6s ease infinite alternate;
+}
+@keyframes winPulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+}
+.die {
+    font-size: 6rem;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 20px;
+    color: #0f172a;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 -4px 10px rgba(0,0,0,0.2);
+}
+.die.rolling { animation: dieRoll 0.4s ease infinite; }
+@keyframes dieRoll {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(90deg) scale(1.1); }
+    50% { transform: rotate(180deg) scale(1); }
+    75% { transform: rotate(270deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+.ach-item {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.ach-item.unlocked {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.05) 100%);
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+}
+.ach-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 12px;
+}
+.ach-item.unlocked .ach-icon { background: rgba(245, 158, 11, 0.2); }
+.stat-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.stat-value { font-size: 1.5rem; font-weight: 900; color: #f59e0b; }
+</style>
+
+<script>
+// ---------- SKAŅAS ----------
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function initAudio() {
+    if (!audioCtx) audioCtx = new AudioCtx();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playTone(freq, duration = 0.1, type = 'sine', volume = 0.08) {
+    try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.value = volume;
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+}
+const SFX = {
+    click: () => playTone(660, 0.08, 'sine', 0.012),
+    win: () => { playTone(523, 0.1); setTimeout(()=>playTone(659,0.1),100); setTimeout(()=>playTone(784,0.2),200); },
+    lose: () => { playTone(300, 0.15, 'sawtooth', 0.06); setTimeout(()=>playTone(200,0.2,'sawtooth',0.06),150); },
+    jackpot: () => { [523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>playTone(f,0.15),i*80)); },
+    dice: () => playTone(200, 0.05, 'square', 0.05),
+    reel: () => playTone(600 + Math.random()*400, 0.03, 'square', 0.03)
+};
+
+// ---------- STATISTIKA ----------
+let stats = {
+    totalWagered: 0, totalWon: 0, totalLost: 0, gamesPlayed: 0,
+    bjWins: 0, bjLosses: 0, rouletteWins: 0, pokerWins: 0,
+    slotsWins: 0, crapsWins: 0, biggestWin: 0, biggestLoss: 0, biggestWinGame: '-'
+};
+function trackBet(amount) { stats.totalWagered += amount; stats.gamesPlayed++; }
+function trackWin(amount, game) {
+    stats.totalWon += amount;
+    if (amount > stats.biggestWin) { stats.biggestWin = amount; stats.biggestWinGame = game; }
+    if (game === 'blackjack') stats.bjWins++;
+    if (game === 'roulette') stats.rouletteWins++;
+    if (game === 'poker') stats.pokerWins++;
+    if (game === 'slots') stats.slotsWins++;
+    if (game === 'craps') stats.crapsWins++;
+}
+function trackLoss(amount, game) {
+    stats.totalLost += amount;
+    if (amount > stats.biggestLoss) stats.biggestLoss = amount;
+    if (game === 'blackjack') stats.bjLosses++;
+}
+function renderStats() {
+    const el = document.getElementById('stats-content');
+    if (!el) return;
+    const net = stats.totalWon - stats.totalLost;
+    const color = net >= 0 ? 'text-emerald-400' : 'text-red-400';
+    el.innerHTML = `
+        <div class="stat-card"><span>🎮 Spēles spēlētas</span><span class="stat-value">${stats.gamesPlayed}</span></div>
+        <div class="stat-card"><span>💰 Kopā likts</span><span class="stat-value">$${stats.totalWagered.toLocaleString()}</span></div>
+        <div class="stat-card"><span>🏆 Kopā laimēts</span><span class="stat-value text-emerald-400">$${stats.totalWon.toLocaleString()}</span></div>
+        <div class="stat-card"><span>💸 Kopā zaudēts</span><span class="stat-value text-red-400">$${stats.totalLost.toLocaleString()}</span></div>
+        <div class="stat-card"><span>📈 Tīrā peļņa</span><span class="stat-value ${color}">${net >= 0 ? '+' : ''}$${net.toLocaleString()}</span></div>
+        <div class="stat-card"><span>🎯 Lielākais laimests</span><span class="stat-value">$${stats.biggestWin.toLocaleString()}</span></div>
+        <div class="stat-card"><span>💔 Lielākais zaudējums</span><span class="stat-value text-red-400">$${stats.biggestLoss.toLocaleString()}</span></div>
+        <div class="stat-card"><span>🃏 Blackjack U/Z</span><span class="stat-value">${stats.bjWins} / ${stats.bjLosses}</span></div>
+        <div class="stat-card"><span>🎡 Rulete uzvaras</span><span class="stat-value">${stats.rouletteWins}</span></div>
+        <div class="stat-card"><span>♠️ Pokeris uzvaras</span><span class="stat-value">${stats.pokerWins}</span></div>
+        <div class="stat-card"><span>🎰 Slots uzvaras</span><span class="stat-value">${stats.slotsWins}</span></div>
+        <div class="stat-card"><span>🎲 Craps uzvaras</span><span class="stat-value">${stats.crapsWins}</span></div>
+    `;
+}
+
+// ---------- ACHIEVEMENTS ----------
+const ACHIEVEMENTS = [
+    { id: 'first_win',     name: 'Pirmā Uzvara',       icon: '🥇', desc: 'Laimē pirmo spēli',                reward: 500,    check: () => stats.totalWon > 0 },
+    { id: 'ten_games',     name: 'Spēlmanis',          icon: '🎮', desc: 'Nospēlē 10 spēles',                reward: 1000,   check: () => stats.gamesPlayed >= 10 },
+    { id: 'fifty_games',   name: 'Kazino Žurka',       icon: '🐀', desc: 'Nospēlē 50 spēles',                reward: 5000,   check: () => stats.gamesPlayed >= 50 },
+    { id: 'hundred_games', name: 'Leģenda',            icon: '🏆', desc: 'Nospēlē 100 spēles',               reward: 25000,  check: () => stats.gamesPlayed >= 100 },
+    { id: 'big_win',       name: 'Lielais Laimests',   icon: '💎', desc: 'Laimē $10,000 vienā spēlē',         reward: 2000,   check: () => stats.biggestWin >= 10000 },
+    { id: 'huge_win',      name: 'Džekpots',           icon: '🎰', desc: 'Laimē $100,000 vienā spēlē',        reward: 20000,  check: () => stats.biggestWin >= 100000 },
+    { id: 'millionaire',   name: 'Milionārs',          icon: '💰', desc: 'Sasniedz $1,000,000 bilanci',       reward: 100000, check: () => wall >= 1000000 },
+    { id: 'collector',     name: 'Kolekcionārs',       icon: '🎒', desc: 'Nopērc 5 VIP lietas',               reward: 15000,  check: () => inventory.length >= 5 },
+    { id: 'all_items',     name: 'Pilns Inventārs',    icon: '👑', desc: 'Nopērc VISAS VIP lietas',           reward: 250000, check: () => inventory.length >= SHOP_ITEMS.length },
+    { id: 'bj_master',     name: 'Blackjack Meistars', icon: '🃏', desc: 'Laimē 10 Blackjack spēles',         reward: 10000,  check: () => stats.bjWins >= 10 },
+    { id: 'roulette_king', name: 'Ruletes Karalis',    icon: '🎡', desc: 'Laimē 10 ruletes griezienus',       reward: 10000,  check: () => stats.rouletteWins >= 10 },
+    { id: 'lucky_seven',   name: 'Laimīgais 7',        icon: '7️⃣', desc: 'Izmanto promo kodu LUCKY777',       reward: 7777,   check: () => usedCodes.includes('LUCKY777') }
+];
+
+let unlockedAchievements = [];
+function checkAchievements() {
+    ACHIEVEMENTS.forEach(ach => {
+        if (!unlockedAchievements.includes(ach.id) && ach.check()) {
+            unlockedAchievements.push(ach.id);
+            wall += ach.reward;
+            showNotification(`🏆 SASNIEGUMS: ${ach.name}! +$${ach.reward.toLocaleString()}`, 'success');
+            SFX.win();
+            autosave();
+        }
+    });
+}
+function renderAchievements() {
+    const el = document.getElementById('ach-list');
+    if (!el) return;
+    el.innerHTML = ACHIEVEMENTS.map(ach => {
+        const unlocked = unlockedAchievements.includes(ach.id);
+        return `
+            <div class="ach-item ${unlocked ? 'unlocked' : ''}">
+                <div class="ach-icon">${unlocked ? ach.icon : '🔒'}</div>
+                <div class="flex-1">
+                    <div class="font-bold text-sm ${unlocked ? 'text-amber-400' : 'text-slate-300'}">${ach.name}</div>
+                    <div class="text-xs text-slate-400">${ach.desc}</div>
+                    <div class="text-xs font-bold ${unlocked ? 'text-emerald-400' : 'text-slate-500'} mt-1">
+                        ${unlocked ? '✅ Saņemts' : '🎁 Balva: $' + ach.reward.toLocaleString()}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ---------- SLOTS ----------
+const SLOT_SYMBOLS = [
+    { s: '🍒', mult: 5,    weight: 30 },
+    { s: '🍋', mult: 10,   weight: 25 },
+    { s: '🔔', mult: 20,   weight: 18 },
+    { s: '💎', mult: 50,   weight: 10 },
+    { s: '7️⃣', mult: 100,  weight: 6 },
+    { s: '🍀', mult: 250,  weight: 3 },
+    { s: '👑', mult: 500,  weight: 2 },
+    { s: '🎰', mult: 1000, weight: 1 }
+];
+let slotsSpinning = false;
+function pickWeightedSymbol() {
+    const total = SLOT_SYMBOLS.reduce((a, s) => a + s.weight, 0);
+    let r = Math.random() * total;
+    for (const sym of SLOT_SYMBOLS) { r -= sym.weight; if (r <= 0) return sym; }
+    return SLOT_SYMBOLS[0];
+}
+function spinSlots() {
+    if (slotsSpinning) return;
+    const bet = parseInt(document.getElementById('slots-bet').value) || 0;
+    if (bet <= 0 || bet > wall) return showNotification("Nederīga likme vai nepietiek naudas!", "error");
+    slotsSpinning = true;
+    wall -= bet;
+    trackBet(bet);
+    updateUI();
+    const reels = ['slot-r1', 'slot-r2', 'slot-r3'];
+    reels.forEach(id => {
+        document.getElementById(id).classList.add('spinning');
+        document.getElementById(id).classList.remove('win');
+    });
+    document.getElementById('slots-msg').innerText = "🎰 Griežas...";
+    let spinInterval = setInterval(() => {
+        reels.forEach(id => {
+            document.getElementById(id).innerText = SLOT_SYMBOLS[Math.floor(Math.random()*SLOT_SYMBOLS.length)].s;
+        });
+        SFX.reel();
+    }, 80);
+    const results = [pickWeightedSymbol(), pickWeightedSymbol(), pickWeightedSymbol()];
+    setTimeout(() => {
+        clearInterval(spinInterval);
+        document.getElementById('slot-r1').classList.remove('spinning');
+        document.getElementById('slot-r1').innerText = results[0].s;
+        SFX.click();
+    }, 800);
+    setTimeout(() => {
+        document.getElementById('slot-r2').classList.remove('spinning');
+        document.getElementById('slot-r2').innerText = results[1].s;
+        SFX.click();
+    }, 1200);
+    setTimeout(() => {
+        document.getElementById('slot-r3').classList.remove('spinning');
+        document.getElementById('slot-r3').innerText = results[2].s;
+        let winAmount = 0, msg = '';
+        if (results[0].s === results[1].s && results[1].s === results[2].s) {
+            const mult = results[0].mult;
+            winAmount = bet * mult;
+            if (equipped.includes('diamond')) winAmount = Math.floor(winAmount * 1.5);
+            if (equipped.includes('hat')) winAmount = Math.floor(winAmount * 1.15);
+            wall += winAmount;
+            trackWin(winAmount, 'slots');
+            reels.forEach(id => document.getElementById(id).classList.add('win'));
+            msg = `🎉 ${results[0].s}${results[1].s}${results[2].s} — LAIMĒTS $${winAmount.toLocaleString()}!`;
+            if (mult >= 500) SFX.jackpot(); else SFX.win();
+            showNotification(msg, 'success');
+        } else {
+            trackLoss(bet, 'slots');
+            msg = `😢 ${results[0].s}${results[1].s}${results[2].s} — nav laimesta.`;
+            SFX.lose();
+        }
+        document.getElementById('slots-msg').innerText = msg;
+        updateUI();
+        checkAchievements();
+        autosave();
+        slotsSpinning = false;
+    }, 1600);
+}
+
+// ---------- CRAPS ----------
+const DICE_FACES = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+let crapsPoint = null;
+let crapsRolling = false;
+function rollCraps() {
+    if (crapsRolling) return;
+    const bet = parseInt(document.getElementById('craps-bet').value) || 0;
+    if (bet <= 0 || bet > wall) return showNotification("Nederīga likme vai nepietiek naudas!", "error");
+    crapsRolling = true;
+    wall -= bet;
+    trackBet(bet);
+    updateUI();
+    const d1 = document.getElementById('craps-die1');
+    const d2 = document.getElementById('craps-die2');
+    d1.classList.add('rolling');
+    d2.classList.add('rolling');
+    document.getElementById('craps-msg').innerText = "🎲 Met...";
+    let rollInterval = setInterval(() => {
+        d1.innerText = DICE_FACES[Math.floor(Math.random()*6)];
+        d2.innerText = DICE_FACES[Math.floor(Math.random()*6)];
+        SFX.dice();
+    }, 80);
+    setTimeout(() => {
+        clearInterval(rollInterval);
+        const r1 = Math.floor(Math.random()*6) + 1;
+        const r2 = Math.floor(Math.random()*6) + 1;
+        const total = r1 + r2;
+        d1.classList.remove('rolling');
+        d2.classList.remove('rolling');
+        d1.innerText = DICE_FACES[r1-1];
+        d2.innerText = DICE_FACES[r2-1];
+        document.getElementById('craps-total').innerText = `Kopā: ${total}`;
+        let msg = '', win = false;
+        if (crapsPoint === null) {
+            if (total === 7 || total === 11) { win = true; msg = `🎉 ${total}! UZVARA!`; }
+            else if (total === 2 || total === 3 || total === 12) { msg = `😢 ${total} — Craps! Zaudēts.`; }
+            else {
+                crapsPoint = total;
+                document.getElementById('craps-point').innerText = `Mērķis: ${total}`;
+                msg = `🎯 Mērķis noteikts: ${total}. Met vēlreiz!`;
+            }
+        } else {
+            if (total === crapsPoint) {
+                win = true;
+                msg = `🎉 ${total} = ${crapsPoint}! UZVARA!`;
+                crapsPoint = null;
+                document.getElementById('craps-point').innerText = 'Mērķis: Nav';
+            } else if (total === 7) {
+                msg = `💀 7 — Seven out! Zaudēts.`;
+                crapsPoint = null;
+                document.getElementById('craps-point').innerText = 'Mērķis: Nav';
+            } else {
+                msg = `🎲 ${total}. Mērķis paliek ${crapsPoint}.`;
+            }
+        }
+        if (win) {
+            let winAmount = bet * 2;
+            if (equipped.includes('diamond')) winAmount = Math.floor(winAmount * 1.5);
+            if (equipped.includes('hat')) winAmount = Math.floor(winAmount * 1.15);
+            wall += winAmount;
+            trackWin(winAmount, 'craps');
+            SFX.win();
+            showNotification(msg, 'success');
+            msg += ` Laimēts $${winAmount.toLocaleString()}!`;
+        } else if (msg.includes('Zaudēts') || msg.includes('Seven out')) {
+            trackLoss(bet, 'craps');
+            SFX.lose();
+        }
+        document.getElementById('craps-msg').innerText = msg;
+        updateUI();
+        checkAchievements();
+        autosave();
+        crapsRolling = false;
+    }, 1500);
+}
+
+// ---------- KEYBOARD SHORTCUTS ----------
+document.addEventListener('keydown', (e) => {
+    if (bjInRound) {
+        if (e.key === 'h' || e.key === 'H') pAction('hit');
+        if (e.key === 's' || e.key === 'S') pAction('stand');
+        if (e.key === 'd' || e.key === 'D') pAction('double');
+    }
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.ov').forEach(o => o.style.display = 'none');
+    }
+});
+
+// ---------- PIEVIENO SPĒĻU KARTĪTES UN POGAS ----------
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        const grid = document.querySelector('#p-main .grid');
+        if (grid) {
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="game-card" onclick="openGame('slots-ov')">
+                    <div class="text-4xl mb-3">🎰</div>
+                    <h3 class="font-bold text-lg mb-1">Augļu Automāts</h3>
+                    <p class="text-xs text-slate-400">3 rullīši ar līdz x1000 izmaksu!</p>
+                </div>
+            `);
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="game-card" onclick="openGame('craps-ov')">
+                    <div class="text-4xl mb-3">🎲</div>
+                    <h3 class="font-bold text-lg mb-1">Craps</h3>
+                    <p class="text-xs text-slate-400">Met kauliņus — 7 vai 11 uzvar!</p>
+                </div>
+            `);
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="game-card" onclick="openGame('ach-ov'); renderAchievements()">
+                    <div class="text-4xl mb-3">🏆</div>
+                    <h3 class="font-bold text-lg mb-1">Sasniegumi</h3>
+                    <p class="text-xs text-slate-400">12 izaicinājumi ar lielām balvām!</p>
+                </div>
+            `);
+        }
+        
+        // Pievieno Statistikas pogu HUD
+        const hudRight = document.querySelector('#hud .flex.items-center.gap-3');
+        if (hudRight) {
+            const statsBtn = document.createElement('button');
+            statsBtn.className = 'btn-primary py-2 px-3 text-xs';
+            statsBtn.style.background = '#334155';
+            statsBtn.innerHTML = '📊 Stats';
+            statsBtn.onclick = function() { openGame('stats-ov'); renderStats(); };
+            hudRight.insertBefore(statsBtn, hudRight.firstChild);
+        }
+    }, 300);
+});
+
+// ---------- PAPILDINA SAGLABĀŠANU ----------
+const _origAutosave = autosave;
+autosave = function() {
+    _origAutosave();
+    try {
+        const key = `sky_casino_stats_${currentUser}`;
+        localStorage.setItem(key, JSON.stringify({
+            stats: stats,
+            unlockedAchievements: unlockedAchievements
+        }));
+    } catch(e) {}
+};
+
+const _origLoadSave = loadSave;
+loadSave = function() {
+    _origLoadSave();
+    try {
+        const key = `sky_casino_stats_${currentUser}`;
+        const raw = localStorage.getItem(key);
+        if (raw) {
+            const data = JSON.parse(raw);
+            if (data.stats) stats = Object.assign(stats, data.stats);
+            if (data.unlockedAchievements) unlockedAchievements = data.unlockedAchievements;
+        }
+    } catch(e) {}
+};
+
+console.log('✅ Sky Casino v3.3 papildinājums ielādēts!');
+</script>
+<!-- ============================================================ -->
+<!-- ============ SKAŅU SISTĒMA VISIEM SPĒLES REŽĪMIEM ========== -->
+<!-- ============================================================ -->
+
+<script>
+(function() {
+    'use strict';
+
+    // ============================================================
+    // AUDIO KONTEKSTS
+    // ============================================================
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let soundEnabled = true;
+    let masterVolume = 0.5;
+
+    // Ielādē saglabātos iestatījumus
+    try {
+        const s = localStorage.getItem('casino_sound_enabled');
+        if (s !== null) soundEnabled = s === 'true';
+        const v = localStorage.getItem('casino_sound_volume');
+        if (v !== null) masterVolume = parseFloat(v);
+    } catch(e) {}
+
+    // Inicializē pēc pirmā klikšķa
+    function initAudio() {
+        if (!audioCtx) {
+            try { audioCtx = new AudioCtx(); } catch(e) { return; }
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.addEventListener('click', initAudio, { once: true });
+    document.addEventListener('keydown', initAudio, { once: true });
+
+    // ============================================================
+    // PAMATA TONIS
+    // ============================================================
+    function tone(freq, duration, type, volume) {
+        if (!soundEnabled || !audioCtx) return;
+        duration = duration || 0.1;
+        type = type || 'sine';
+        volume = volume || 0.15;
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.value = volume * masterVolume;
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+    }
+
+    // ============================================================
+    // SKAŅU BIBLIOTĒKA
+    // ============================================================
+    const Sound = {
+        // UI
+        click:   function() { tone(660, 0.08, 'sine', 0.012); },
+        hover:   function() { tone(520, 0.05, 'sine', 0.006); },
+        error:   function() { tone(200, 0.1, 'sawtooth', 0.12); setTimeout(function(){ tone(150, 0.15, 'sawtooth', 0.12); }, 100); },
+        success: function() { tone(523, 0.08); setTimeout(function(){ tone(659, 0.08); }, 70); setTimeout(function(){ tone(784, 0.15); }, 140); },
+        notify:  function() { tone(880, 0.08, 'sine', 0.08); setTimeout(function(){ tone(1100, 0.08, 'sine', 0.08); }, 80); },
+
+        // Kārtis
+        cardDeal: function() { tone(1800, 0.03, 'triangle', 0.05); setTimeout(function(){ tone(600, 0.05, 'triangle', 0.05); }, 20); },
+        cardFlip: function() { tone(900, 0.05, 'sawtooth', 0.04); },
+
+        // Žetoni
+        chipBet: function() { tone(1400, 0.04, 'square', 0.08); setTimeout(function(){ tone(900, 0.06, 'square', 0.06); }, 30); },
+        chipWin: function() {
+            [1200, 1500, 1800, 2100].forEach(function(f, i) {
+                setTimeout(function() { tone(f, 0.06, 'triangle', 0.07); }, i * 40);
+            });
+        },
+
+        // Blackjack
+        bjDeal: function() {
+            [600, 800, 1000].forEach(function(f, i) {
+                setTimeout(function() { tone(f, 0.05, 'triangle', 0.06); }, i * 60);
+            });
+        },
+        bjHit:    function() { Sound.cardDeal(); },
+        bjStand:  function() { tone(500, 0.1, 'sine', 0.06); },
+        bjBust:   function() { tone(300, 0.2, 'sawtooth', 0.1); setTimeout(function(){ tone(200, 0.3, 'sawtooth', 0.1); }, 150); },
+        bjBlackjack: function() {
+            [523, 659, 784, 1047].forEach(function(f, i) {
+                setTimeout(function() { tone(f, 0.15, 'sine', 0.12); }, i * 80);
+            });
+            setTimeout(function() { tone(1319, 0.4, 'sine', 0.12); }, 320);
+        },
+        bjWin: function() {
+            [523, 659, 784].forEach(function(f, i) {
+                setTimeout(function() { tone(f, 0.12, 'sine', 0.1); }, i * 70);
+            });
+        },
+        bjLose: function() { tone(350, 0.15, 'sawtooth', 0.08); setTimeout(function(){ tone(250, 0.25, 'sawtooth', 0.08); }, 130); },
+        bjPush: function() { tone(600, 0.1, 'sine', 0.06); setTimeout(function(){ tone(600, 0.1, 'sine', 0.06); }, 120); },
+
+        // Rulete
+        rouletteStart: function() {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(function() { tone(400 + i * 20, 0.04, 'square', 0.03); }, i * 50);
+            }
+        },
+        rouletteTick: function() { tone(2000 + Math.random() * 500, 0.02, 'square', 0.04); },
+        rouletteStop: function() { tone(150, 0.3, 'sine', 0.08); },
+        rouletteWin: function() {
+            [523, 659, 784, 1047, 1319].forEach(function(f, i) {
+                setTimeout(function() { tone(f, 0.15, 'sine', 0.1); }, i * 70);
+            });
+        },
+
+        // Pokeris
+        pokerDeal: function() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(function() { Sound.cardDeal(); }, i * 70);
+            }
+        },
+        pokerFlop: function() {
+            for (let i = 0; i < 3; i++) {
+                setTimeout(function() { Sound.cardFlip(); }, i * 120);
+            }
+        },
+        pokerTurn:  function() { Sound.cardFlip(); },
+        pokerRiver: function() { Sound.cardFlip(); },
+        pokerCheck: function() { tone(700, 0.06, 'square', 0.06); setTimeout(function(){ tone(900, 0.06, 'square', 0.06); }, 60); },
+        pokerRaise: function() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(function() { tone(1200 + i * 100, 0.05, 'triangle', 0.06); }, i * 50);
+            }
+        },
+        pokerFold: function() { tone(300, 0.1, 'sawtooth', 0.06); setTimeout(function(){ tone(200, 0.15, 'sawtooth', 0.06); }, 80); },
+        pokerWin:  function() {
+            [659, 784, 988, 1175].forEach(function(f, i) {
+                setTimeout(function() { tone(f, 0.15, 'sine', 0.1); }, i * 90);
+            });
+        },
+        pokerLose: function() { tone(400, 0.2, 'sawtooth', 0.08); setTimeout(function(){ tone(300, 0.3, 'sawtooth', 0.08); }, 180); },
+        pokerShowdown: function() {
+            [440, 554, 659, 880].forEach(function(f, i) {
+                setTimeout(function() { tone(f, 0.1, 'triangle', 0.08); }, i * 60);
+            });
+        },
+
+        // Scratch
+        scratch: function() { tone(3000 + Math.random() * 1000, 0.02, 'sawtooth', 0.02); },
+        scratchReveal: function() { tone(1400, 0.06, 'triangle', 0.06); setTimeout(function(){ tone(1800, 0.06, 'triangle', 0.06); }, 40); },
+        scratchWin: function() {
+            [523, 659, 784, 1047, 1319, 1568].forEach(function(f, i) {
+                setTimeout(function() { tone(f, 0.12, 'sine', 0.1); }, i * 60);
+            });
+        },
+        scratchLose: function() { tone(350, 0.15, 'sawtooth', 0.06); },
+
+        // Slots
+        slotSpin: function() { tone(600 + Math.random() * 400, 0.03, 'square', 0.03); },
+        slotStop: function() { tone(1000, 0.08, 'triangle', 0.08); setTimeout(function(){ tone(700, 0.1, 'triangle', 0.06); }, 60); },
+        slotJackpot: function() {
+            [523, 659, 784, 1047, 1319, 1568, 2093].forEach(function(f, i) {
+                setTimeout(function() { tone(f, 0.18, 'sine', 0.12); }, i * 70);
+            });
+        },
+
+        // Craps
+        diceRoll: function() { tone(200, 0.04, 'square', 0.05); },
+        diceStop: function() { tone(400, 0.1, 'triangle', 0.08); setTimeout(function(){ tone(300, 0.1, 'triangle', 0.06); }, 80); },
+
+        // Lielie
+        jackpot: function() {
+            const notes = [523, 659, 784, 1047, 1319, 1568, 2093, 1568, 2093];
+            notes.forEach(function(f, i) {
+                setTimeout(function() {
+                    tone(f, 0.15, 'sine', 0.12);
+                    tone(f / 2, 0.15, 'triangle', 0.06);
+                }, i * 90);
+            });
+        },
+        coinDrop: function() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(function() { tone(1500 + Math.random() * 800, 0.04, 'triangle', 0.05); }, i * 30);
+            }
+        }
+    };
+
+    window.Sound = Sound;
+
+    // ============================================================
+    // AUTOMĀTISKĀ PIELIKOŠANA PIE ESOŠAJĀM FUNKCIJĀM
+    // ============================================================
+
+    // --- POGAS ---
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('button, .game-card, .chip, .r-cell, .nav-tab');
+        if (btn && !btn.disabled) Sound.click();
+    }, true);
+
+    document.addEventListener('mouseover', function(e) {
+        const btn = e.target.closest('button, .game-card, .chip, .r-cell');
+        if (btn && !btn.disabled) Sound.hover();
+    }, true);
+
+    // --- NOTIFICATION ---
+    if (typeof window.showNotification === 'function') {
+        const origNotify = window.showNotification;
+        window.showNotification = function(msg, type) {
+            origNotify(msg, type);
+            if (type === 'error') Sound.error();
+            else Sound.notify();
+        };
+    }
+
+    // --- BLACKJACK ---
+    if (typeof window.deal === 'function') {
+        const origDeal = window.deal;
+        window.deal = function() {
+            const wasInRound = window.bjInRound;
+            origDeal();
+            if (window.bjInRound && !wasInRound) Sound.bjDeal();
+        };
+    }
+
+    if (typeof window.pAction === 'function') {
+        const origPAction = window.pAction;
+        window.pAction = function(act) {
+            const wasInRound = window.bjInRound;
+            origPAction(act);
+            if (!wasInRound) return;
+            if (act === 'hit') Sound.bjHit();
+            if (act === 'stand') Sound.bjStand();
+            if (act === 'double') { Sound.chipBet(); setTimeout(function(){ Sound.cardDeal(); }, 100); }
+        };
+    }
+
+    if (typeof window.endBJRound === 'function') {
+        const origEnd = window.endBJRound;
+        window.endBJRound = function(msg) {
+            origEnd(msg);
+            if (msg.indexOf('UZVARA') >= 0 || msg.indexOf('Uzvara') >= 0) {
+                if (msg.indexOf('21') >= 0) Sound.bjBlackjack();
+                else Sound.bjWin();
+                Sound.chipWin();
+            } else if (msg.indexOf('Neizšķirts') >= 0) {
+                Sound.bjPush();
+            } else {
+                Sound.bjLose();
+            }
+        };
+    }
+
+    if (typeof window.bet === 'function') {
+        const origBet = window.bet;
+        window.bet = function(amt) {
+            origBet(amt);
+            if (window.currentBet > 0) Sound.chipBet();
+        };
+    }
+
+    if (typeof window.allIn === 'function') {
+        const origAllIn = window.allIn;
+        window.allIn = function() {
+            origAllIn();
+            if (window.currentBet > 0) {
+                Sound.chipBet();
+                setTimeout(function(){ Sound.chipBet(); }, 80);
+                setTimeout(function(){ Sound.chipBet(); }, 160);
+            }
+        };
+    }
+
+    if (typeof window.cancelBet === 'function') {
+        const origCancel = window.cancelBet;
+        window.cancelBet = function() {
+            const had = window.currentBet > 0;
+            origCancel();
+            if (had) Sound.error();
+        };
+    }
+
+    // --- RULETE ---
+    if (typeof window.spinRouletteWheel === 'function') {
+        const origSpin = window.spinRouletteWheel;
+        window.spinRouletteWheel = function() {
+            const beforeWall = window.wall;
+            origSpin();
+            if (window.wall < beforeWall) {
+                Sound.rouletteStart();
+                Sound.chipBet();
+                let ticks = 0;
+                const iv = setInterval(function() {
+                    if (!window.isRouletteSpinning || ticks > 40) { clearInterval(iv); return; }
+                    if (ticks < 25 || Math.random() < 0.5) Sound.rouletteTick();
+                    ticks++;
+                }, 130);
+                setTimeout(function() { Sound.rouletteStop(); clearInterval(iv); }, 6000);
+            }
+        };
+    }
+
+    if (typeof window.placeRouletteBet === 'function') {
+        const origPlace = window.placeRouletteBet;
+        window.placeRouletteBet = function(t) {
+            origPlace(t);
+            Sound.click();
+        };
+    }
+
+    if (typeof window.evaluateRouletteWin === 'function') {
+        const origEval = window.evaluateRouletteWin;
+        window.evaluateRouletteWin = function(winNum, betVal) {
+            origEval(winNum, betVal);
+            const statusEl = document.getElementById('rl-status-msg');
+            if (statusEl) {
+                if (statusEl.innerText.indexOf('laimējāt') >= 0) {
+                    Sound.rouletteWin();
+                    Sound.chipWin();
+                } else if (statusEl.innerText.indexOf('Nav laimests') >= 0) {
+                    Sound.bjLose();
+                }
+            }
+        };
+    }
+
+    // --- POKERIS ---
+    if (typeof window.startPokerHand === 'function') {
+        const origStart = window.startPokerHand;
+        window.startPokerHand = function() {
+            const beforeWall = window.wall;
+            origStart();
+            if (window.wall < beforeWall) {
+                Sound.pokerDeal();
+                Sound.chipBet();
+            }
+        };
+    }
+
+    if (typeof window.pokerAction === 'function') {
+        const origPokerAction = window.pokerAction;
+        window.pokerAction = function(act) {
+            const beforePhase = window.pokerState ? window.pokerState.phase : null;
+            origPokerAction(act);
+            if (act === 'fold') { Sound.pokerFold(); return; }
+            if (act === 'raise') { Sound.pokerRaise(); return; }
+            if (act === 'check') { Sound.pokerCheck(); }
+            const newPhase = window.pokerState ? window.pokerState.phase : null;
+            if (newPhase !== beforePhase) {
+                if (newPhase === 'FLOP') Sound.pokerFlop();
+                if (newPhase === 'TURN') Sound.pokerTurn();
+                if (newPhase === 'RIVER') Sound.pokerRiver();
+                if (newPhase === 'SHOWDOWN') Sound.pokerShowdown();
+            }
+        };
+    }
+
+    if (typeof window.settlePoker === 'function') {
+        const origSettle = window.settlePoker;
+        window.settlePoker = function(winners, note, reveal) {
+            origSettle(winners, note, reveal);
+            if (winners && winners.indexOf('player') >= 0) {
+                Sound.pokerWin();
+                Sound.chipWin();
+            } else {
+                Sound.pokerLose();
+            }
+        };
+    }
+
+    // --- SCRATCH ---
+    if (typeof window.scBuy === 'function') {
+        const origBuy = window.scBuy;
+        window.scBuy = function(i) {
+            const beforeDone = window.sc ? window.sc.done : true;
+            origBuy(i);
+            if (beforeDone && window.sc && !window.sc.done) Sound.chipBet();
+        };
+    }
+
+    if (typeof window.scReveal === 'function') {
+        const origReveal = window.scReveal;
+        window.scReveal = function(i) {
+            const had = window.sc && window.sc.rev ? window.sc.rev.has(i) : true;
+            origReveal(i);
+            if (!had && window.sc && window.sc.rev && window.sc.rev.has(i)) Sound.scratchReveal();
+        };
+    }
+
+    if (typeof window.scFinish === 'function') {
+        const origFinish = window.scFinish;
+        window.scFinish = function() {
+            const beforeWall = window.wall;
+            origFinish();
+            if (window.wall > beforeWall) {
+                Sound.scratchWin();
+                Sound.chipWin();
+            } else {
+                Sound.scratchLose();
+            }
+        };
+    }
+
+    // Skrāpēšana
+    document.addEventListener('pointermove', function(e) {
+        if (e.buttons === 1 && e.target.tagName === 'CANVAS') {
+            if (e.target.closest('#sc-ticket') && Math.random() < 0.25) Sound.scratch();
+        }
+    }, true);
+
+    // --- SLOTS ---
+    if (typeof window.spinSlots === 'function') {
+        const origSlots = window.spinSlots;
+        window.spinSlots = function() {
+            origSlots();
+            Sound.chipBet();
+            const iv = setInterval(function() {
+                if (!window.slotsSpinning) { clearInterval(iv); return; }
+                Sound.slotSpin();
+            }, 80);
+        };
+    }
+
+    // --- CRAPS ---
+    if (typeof window.rollCraps === 'function') {
+        const origCraps = window.rollCraps;
+        window.rollCraps = function() {
+            origCraps();
+            Sound.chipBet();
+            const iv = setInterval(function() {
+                if (!window.crapsRolling) { clearInterval(iv); return; }
+                Sound.diceRoll();
+            }, 80);
+            setTimeout(function() { Sound.diceStop(); }, 1500);
+        };
+    }
+
+    // --- MENU ---
+    if (typeof window.switchTab === 'function') {
+        const origTab = window.switchTab;
+        window.switchTab = function(id, btn) { origTab(id, btn); Sound.click(); };
+    }
+    if (typeof window.openMenu === 'function') {
+        const origOpen = window.openMenu;
+        window.openMenu = function() { origOpen(); Sound.click(); };
+    }
+    if (typeof window.closeMenu === 'function') {
+        const origClose = window.closeMenu;
+        window.closeMenu = function() { origClose(); Sound.click(); };
+    }
+    if (typeof window.openGame === 'function') {
+        const origOG = window.openGame;
+        window.openGame = function(id) { origOG(id); Sound.success(); };
+    }
+    if (typeof window.ovBack === 'function') {
+        const origBack = window.ovBack;
+        window.ovBack = function() { origBack(); Sound.click(); };
+    }
+
+    // --- DĀVANA / PIRKUMI ---
+    if (typeof window.claimDailyGift === 'function') {
+        const origClaim = window.claimDailyGift;
+        window.claimDailyGift = function() {
+            const before = window.wall;
+            origClaim();
+            if (window.wall > before) {
+                Sound.coinDrop();
+                setTimeout(function(){ Sound.success(); }, 300);
+            }
+        };
+    }
+    if (typeof window.buyShopItem === 'function') {
+        const origBuyItem = window.buyShopItem;
+        window.buyShopItem = function(id) {
+            const before = window.wall;
+            origBuyItem(id);
+            if (window.wall < before) {
+                Sound.coinDrop();
+                Sound.success();
+            }
+        };
+    }
+    if (typeof window.redeem === 'function') {
+        const origRedeem = window.redeem;
+        window.redeem = function() {
+            const before = window.wall;
+            origRedeem();
+            if (window.wall > before) {
+                Sound.coinDrop();
+                setTimeout(function(){ Sound.jackpot(); }, 200);
+            }
+        };
+    }
+
+    // ============================================================
+    // SKAŅAS POGA HUD
+    // ============================================================
+    function addSoundButton() {
+        if (document.getElementById('sound-toggle-btn')) return true;
+
+        let target = document.getElementById('hud-right');
+        if (!target) {
+            target = document.querySelector('#hud .flex.items-center.gap-3');
+        }
+        if (!target) return false;
+
+        const btn = document.createElement('button');
+        btn.id = 'sound-toggle-btn';
+        btn.className = 'btn-primary py-2 px-3 text-xs';
+        btn.style.background = soundEnabled ? '#334155' : '#7f1d1d';
+        btn.innerHTML = soundEnabled ? '🔊' : '🔇';
+        btn.title = 'Ieslēgt/Izslēgt skaņu';
+        btn.onclick = function() {
+            soundEnabled = !soundEnabled;
+            btn.innerHTML = soundEnabled ? '🔊' : '🔇';
+            btn.style.background = soundEnabled ? '#334155' : '#7f1d1d';
+            try {
+                localStorage.setItem('casino_sound_enabled', soundEnabled);
+            } catch(e) {}
+            if (soundEnabled) Sound.success();
+        };
+        target.insertBefore(btn, target.firstChild);
+        return true;
+    }
+
+    // Mēģina pievienot pogu vairākas reizes
+    let tries = 0;
+    const btnInterval = setInterval(function() {
+        if (addSoundButton() || ++tries > 20) clearInterval(btnInterval);
+    }, 300);
+
+    // Saglabā skaļumu
+    window.addEventListener('beforeunload', function() {
+        try {
+            localStorage.setItem('casino_sound_enabled', soundEnabled);
+            localStorage.setItem('casino_sound_volume', masterVolume);
+        } catch(e) {}
+    });
+
+    console.log('✅ Skaņu sistēma ielādēta! Klikšķini jebkur, lai aktivizētu audio.');
+
+})();
+</script>
+<!-- ============================================================ -->
+<!-- ============ SCRATCH — MAZ IESPĒJA UZVARĒT ================= -->
+<!-- ============================================================ -->
+
+<div id="sc2-ov" class="ov">
+    <div class="glass-panel p-6 w-full max-w-3xl">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-left">
+                <h2 class="text-3xl font-black bg-gradient-to-r from-amber-400 to-pink-500 bg-clip-text text-transparent">🎟️ SCRATCH</h2>
+                <p class="text-xs text-red-400 mt-1 font-bold">⚠️ GRŪTI UZVARĒT — tikai 8% iespēja!</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hud-balance text-sm py-1.5 px-3">💰 $<span class="w2">0</span></div>
+                <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ</button>
+            </div>
+        </div>
+
+        <div id="sc2-menu">
+            <div class="text-center mb-4">
+                <h3 class="text-xl font-black mb-1">Izvēlies Biļeti</h3>
+                <p class="text-xs text-red-400">⚠️ Maz iespēja uzvarēt — esi gatavs zaudēt!</p>
+            </div>
+            <div id="sc2-ticket-types" class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4"></div>
+
+            <div class="grid grid-cols-4 gap-3 mt-6 p-4 bg-slate-900/60 rounded-2xl border border-white/10">
+                <div class="text-center">
+                    <div class="text-xs text-slate-400">Spēlēts</div>
+                    <div class="text-2xl font-black text-amber-400" id="sc2-stat-played">0</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xs text-slate-400">Uzvaras</div>
+                    <div class="text-2xl font-black text-emerald-400" id="sc2-stat-wins">0</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xs text-slate-400">Laimests</div>
+                    <div class="text-2xl font-black text-amber-400" id="sc2-stat-won">$0</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xs text-slate-400">Labākais</div>
+                    <div class="text-2xl font-black text-pink-400" id="sc2-stat-best">$0</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sc2-game" style="display:none;">
+            <div class="flex justify-between items-center mb-3 p-3 bg-slate-900/80 rounded-xl border border-amber-500/30">
+                <div class="flex items-center gap-3">
+                    <span id="sc2-ticket-name" class="font-black text-amber-400"></span>
+                    <span class="text-xs text-slate-400">|</span>
+                    <span class="text-xs text-slate-400">Atklāts: <span id="sc2-revealed-count" class="font-bold text-white">0</span>/9</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400">Laimests:</span>
+                    <span id="sc2-potential" class="font-black text-emerald-400">$0</span>
+                </div>
+            </div>
+
+            <div id="sc2-grid" class="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border-4 border-red-500/40 mb-4 relative" style="min-height: 360px;"></div>
+
+            <div id="sc2-msg" class="text-center font-black text-lg h-8 mb-3"></div>
+
+            <div class="flex justify-center gap-3">
+                <button onclick="sc2RevealAll()" id="sc2-reveal-all-btn" class="btn-primary py-2 px-6 text-sm">👁️ ATKLĀT VISU</button>
+                <button onclick="sc2BackToMenu()" class="btn-danger py-2 px-6 text-sm">🔄 JAUNU BIĻETI</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.sc2-ticket-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px; padding: 16px; text-align: center;
+    cursor: pointer; transition: all 0.3s ease;
+    position: relative; overflow: hidden;
+}
+.sc2-ticket-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+    transform: translateX(-100%); transition: transform 0.6s ease;
+}
+.sc2-ticket-card:hover::before { transform: translateX(100%); }
+.sc2-ticket-card:hover { transform: translateY(-4px) scale(1.02); }
+.sc2-ticket-card.bronze { border-color: #cd7f32; }
+.sc2-ticket-card.silver { border-color: #c0c0c0; }
+.sc2-ticket-card.gold { border-color: #f59e0b; }
+.sc2-ticket-card.platinum { border-color: #a855f7; }
+.sc2-ticket-card.diamond { border-color: #06b6d4; box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); }
+.sc2-ticket-card.bronze:hover { box-shadow: 0 15px 40px -10px #cd7f32; }
+.sc2-ticket-card.silver:hover { box-shadow: 0 15px 40px -10px #c0c0c0; }
+.sc2-ticket-card.gold:hover { box-shadow: 0 15px 40px -10px #f59e0b; }
+.sc2-ticket-card.platinum:hover { box-shadow: 0 15px 40px -10px #a855f7; }
+.sc2-ticket-card.diamond:hover { box-shadow: 0 15px 40px -10px #06b6d4; }
+
+.sc2-cell {
+    position: relative; aspect-ratio: 1; border-radius: 12px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; transition: all 0.3s ease; min-height: 90px;
+}
+.sc2-cell .sc2-value {
+    font-size: 1.8rem; font-weight: 900; color: #f59e0b;
+    z-index: 1; text-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+    user-select: none; pointer-events: none;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.sc2-cell .sc2-value .sc2-label { font-size: 0.6rem; color: #94a3b8; font-weight: 600; letter-spacing: 0.5px; }
+.sc2-cell .sc2-value.win {
+    color: #10b981; text-shadow: 0 0 25px rgba(16, 185, 129, 0.9);
+    animation: winBounce 0.6s ease infinite alternate;
+}
+.sc2-cell .sc2-value.bonus {
+    color: #ec4899; text-shadow: 0 0 25px rgba(236, 72, 153, 0.9);
+    animation: bonusPulse 0.5s ease infinite alternate;
+}
+.sc2-cell .sc2-value.jackpot {
+    color: #f59e0b;
+    text-shadow: 0 0 30px rgba(245, 158, 11, 1), 0 0 60px rgba(245, 158, 11, 0.6);
+    animation: jackpotSpin 1s ease infinite;
+}
+@keyframes winBounce { from { transform: scale(1); } to { transform: scale(1.15); } }
+@keyframes bonusPulse { from { transform: scale(1); } to { transform: scale(1.2); } }
+@keyframes jackpotSpin {
+    0%, 100% { transform: scale(1.1) rotate(-2deg); }
+    50% { transform: scale(1.2) rotate(2deg); }
+}
+.sc2-cell canvas {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    border-radius: 10px; cursor: crosshair; touch-action: none;
+    z-index: 2; transition: opacity 0.4s ease;
+}
+.sc2-cell.revealed { border-color: rgba(16, 185, 129, 0.6); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+.sc2-cell.revealed-win { border-color: rgba(16, 185, 129, 0.9); box-shadow: 0 0 30px rgba(16, 185, 129, 0.6); }
+.sc2-cell.jackpot-cell { border-color: rgba(245, 158, 11, 0.9); box-shadow: 0 0 40px rgba(245, 158, 11, 0.7); animation: jackpotCellGlow 0.8s ease infinite alternate; }
+@keyframes jackpotCellGlow {
+    from { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+    to { box-shadow: 0 0 40px rgba(245, 158, 11, 0.9); }
+}
+.sc2-confetti {
+    position: fixed; width: 10px; height: 10px;
+    pointer-events: none; z-index: 99999;
+    animation: confettiFall 3s linear forwards;
+}
+@keyframes confettiFall {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+</style>
+
+<script>
+// ============================================================
+// SCRATCH — MAZ IESPĒJA UZVARĒT (tikai 8%)
+// ============================================================
+
+const SC2_TICKETS = [
+    {
+        id: 'bronze', name: '🥉 Bronza', price: 100, color: '#cd7f32', class: 'bronze',
+        symbols: [
+            { icon: '💵', val: 2,    weight: 40 },
+            { icon: '💰', val: 3,    weight: 30 },
+            { icon: '💎', val: 5,    weight: 15 },
+            { icon: '🏆', val: 10,   weight: 10 },
+            { icon: '👑', val: 25,   weight: 4 },
+            { icon: '🎰', val: 50,   weight: 1 }
+        ],
+        bonusChance: 0.05,
+        jackpotChance: 0.01
+    },
+    {
+        id: 'silver', name: '🥈 Sudrabs', price: 1000, color: '#c0c0c0', class: 'silver',
+        symbols: [
+            { icon: '💵', val: 2,    weight: 35 },
+            { icon: '💰', val: 3,    weight: 25 },
+            { icon: '💎', val: 5,    weight: 20 },
+            { icon: '🏆', val: 10,   weight: 12 },
+            { icon: '👑', val: 25,   weight: 6 },
+            { icon: '🎰', val: 100,  weight: 2 }
+        ],
+        bonusChance: 0.06,
+        jackpotChance: 0.015
+    },
+    {
+        id: 'gold', name: '🥇 Zelts', price: 10000, color: '#f59e0b', class: 'gold',
+        symbols: [
+            { icon: '💵', val: 2,    weight: 30 },
+            { icon: '💰', val: 3,    weight: 25 },
+            { icon: '💎', val: 5,    weight: 20 },
+            { icon: '🏆', val: 10,   weight: 15 },
+            { icon: '👑', val: 25,   weight: 8 },
+            { icon: '🎰', val: 250,  weight: 2 }
+        ],
+        bonusChance: 0.08,
+        jackpotChance: 0.02
+    },
+    {
+        id: 'platinum', name: '💜 Platīns', price: 50000, color: '#a855f7', class: 'platinum',
+        symbols: [
+            { icon: '💵', val: 2,    weight: 25 },
+            { icon: '💰', val: 3,    weight: 25 },
+            { icon: '💎', val: 5,    weight: 20 },
+            { icon: '🏆', val: 10,   weight: 18 },
+            { icon: '👑', val: 50,   weight: 10 },
+            { icon: '🎰', val: 500,  weight: 2 }
+        ],
+        bonusChance: 0.10,
+        jackpotChance: 0.025
+    },
+    {
+        id: 'diamond', name: '💎 Dimants', price: 250000, color: '#06b6d4', class: 'diamond',
+        symbols: [
+            { icon: '💵', val: 2,    weight: 20 },
+            { icon: '💰', val: 5,    weight: 25 },
+            { icon: '💎', val: 10,   weight: 20 },
+            { icon: '🏆', val: 25,   weight: 18 },
+            { icon: '👑', val: 100,  weight: 12 },
+            { icon: '🎰', val: 1000, weight: 5 }
+        ],
+        bonusChance: 0.12,
+        jackpotChance: 0.03
+    }
+];
+
+let sc2State = {
+    ticket: null, cells: [], revealed: 0, done: false,
+    totalPrize: 0, bonusMultiplier: 1, hasJackpot: false
+};
+
+let sc2Stats = { played: 0, wins: 0, totalWon: 0, bestWin: 0 };
+
+function sc2RenderMenu() {
+    const container = document.getElementById('sc2-ticket-types');
+    if (!container) return;
+    container.innerHTML = SC2_TICKETS.map((t, i) => `
+        <div class="sc2-ticket-card ${t.class}" onclick="sc2Start(${i})">
+            <div class="text-4xl mb-2">${t.name.split(' ')[0]}</div>
+            <div class="font-black text-sm mb-1" style="color:${t.color}">${t.name}</div>
+            <div class="text-amber-400 font-black text-lg">$${t.price.toLocaleString()}</div>
+            <div class="text-[10px] text-red-400 mt-1 font-bold">⚠️ GRŪTI</div>
+        </div>
+    `).join('');
+    sc2UpdateStats();
+}
+
+function sc2UpdateStats() {
+    document.getElementById('sc2-stat-played').innerText = sc2Stats.played;
+    document.getElementById('sc2-stat-wins').innerText = sc2Stats.wins;
+    document.getElementById('sc2-stat-won').innerText = '$' + sc2Stats.totalWon.toLocaleString();
+    document.getElementById('sc2-stat-best').innerText = '$' + sc2Stats.bestWin.toLocaleString();
+}
+
+function sc2Start(ticketIdx) {
+    const ticket = SC2_TICKETS[ticketIdx];
+    if (wall < ticket.price) {
+        showNotification("Nepietiek līdzekļu!", "error");
+        if (window.Sound) Sound.error();
+        return;
+    }
+    wall -= ticket.price;
+    updateUI();
+    autosave();
+    if (window.Sound) Sound.chipBet();
+
+    sc2State = {
+        ticket: ticket,
+        cells: sc2GenerateCells(ticket),
+        revealed: 0, done: false, totalPrize: 0,
+        bonusMultiplier: 1, hasJackpot: false
+    };
+    sc2Stats.played++;
+    sc2Stats.totalWon -= ticket.price;
+
+    document.getElementById('sc2-menu').style.display = 'none';
+    document.getElementById('sc2-game').style.display = 'block';
+    document.getElementById('sc2-ticket-name').innerText = ticket.name;
+    document.getElementById('sc2-msg').innerText = '';
+
+    sc2RenderGrid();
+}
+
+// ============================================================
+// veiksmi uzvarēt
+// ============================================================
+function sc2GenerateCells(ticket) {
+    const cells = [];
+
+    // ⚠️ veiksmi uzvarēt!
+    const willWin = Math.random() < 0.08;
+
+    if (willWin) {
+        // Uzvara — 3 vienādi simboli (vairs ne 5-7!)
+        const winSymbol = sc2PickWeighted(ticket.symbols);
+
+        // Tieši 3 vienādi simboli (grūti dabūt)
+        for (let i = 0; i < 3; i++) {
+            cells.push({ ...winSymbol, isWinner: true });
+        }
+
+        // Pārējie 6 - nejauši
+        for (let i = 0; i < 6; i++) {
+            let sym;
+            do { sym = sc2PickWeighted(ticket.symbols); }
+            while (sym.val === winSymbol.val);
+            cells.push({ ...sym, isWinner: false });
+        }
+    } else {
+        // ⚠️ ZAUDĒJUMS — visi nejauši, bet NEDRĪKST būt 3 vienādi!
+        // Ģenerējam 9 nejaušus, pārbaudām, ka nav 3 vienādi
+        let attempts = 0;
+        do {
+            cells.length = 0;
+            for (let i = 0; i < 9; i++) {
+                cells.push({ ...sc2PickWeighted(ticket.symbols), isWinner: false });
+            }
+            attempts++;
+        } while (sc2HasThreeMatches(cells) && attempts < 20);
+
+        // Ja tomēr izveidojās 3 vienādi pēc 20 mēģinājumiem — piespiedu labojums
+        if (sc2HasThreeMatches(cells)) {
+            sc2BreakThreeMatches(cells, ticket.symbols);
+        }
+    }
+
+    // Bonuss (reti)
+    if (Math.random() < ticket.bonusChance) {
+        const bonusCellIdx = Math.floor(Math.random() * 9);
+        const bonusMult = [2, 3, 5][Math.floor(Math.random() * 3)];
+        cells[bonusCellIdx] = {
+            icon: '✨', val: 0, isWinner: false,
+            isBonus: true, bonusMult: bonusMult
+        };
+    }
+
+    // Jackpot (ļoti reti)
+    if (Math.random() < ticket.jackpotChance) {
+        const jackpotIdx = Math.floor(Math.random() * 9);
+        cells[jackpotIdx] = {
+            icon: '🎰',
+            val: ticket.symbols[ticket.symbols.length - 1].val * 5,
+            isWinner: false, isJackpot: true
+        };
+        sc2State.hasJackpot = true;
+    }
+
+    return cells.sort(() => Math.random() - 0.5);
+}
+
+// Pārbauda, vai ir 3 vienādi simboli
+function sc2HasThreeMatches(cells) {
+    const counts = {};
+    cells.forEach(c => {
+        if (c.isBonus || c.isJackpot) return;
+        counts[c.val] = (counts[c.val] || 0) + 1;
+    });
+    return Object.values(counts).some(cnt => cnt >= 3);
+}
+
+// Salauž 3 vienādus simbolus (nomaina vienu)
+function sc2BreakThreeMatches(cells, symbols) {
+    const counts = {};
+    cells.forEach((c, i) => {
+        if (c.isBonus || c.isJackpot) return;
+        if (!counts[c.val]) counts[c.val] = [];
+        counts[c.val].push(i);
+    });
+
+    Object.entries(counts).forEach(([val, indices]) => {
+        if (indices.length >= 3) {
+            // Nomainām 2. un 3. simbolu uz citiem
+            for (let i = 1; i < indices.length; i++) {
+                let newSym;
+                do { newSym = sc2PickWeighted(symbols); }
+                while (newSym.val === parseInt(val));
+                cells[indices[i]] = { ...newSym, isWinner: false };
+            }
+        }
+    });
+}
+
+function sc2PickWeighted(symbols) {
+    const total = symbols.reduce((a, s) => a + s.weight, 0);
+    let r = Math.random() * total;
+    for (const sym of symbols) { r -= sym.weight; if (r <= 0) return sym; }
+    return symbols[0];
+}
+
+function sc2RenderGrid() {
+    const grid = document.getElementById('sc2-grid');
+    grid.innerHTML = '';
+    sc2State.cells.forEach((cell, idx) => {
+        const cellEl = document.createElement('div');
+        cellEl.className = 'sc2-cell';
+        cellEl.dataset.idx = idx;
+
+        const valEl = document.createElement('div');
+        valEl.className = 'sc2-value';
+        if (cell.isWinner) valEl.classList.add('win');
+        if (cell.isBonus) valEl.classList.add('bonus');
+        if (cell.isJackpot) valEl.classList.add('jackpot');
+
+        if (cell.isBonus) {
+            valEl.innerHTML = `${cell.icon}<span class="sc2-label">x${cell.bonusMult}</span>`;
+        } else {
+            const prize = sc2State.ticket.price * cell.val;
+            valEl.innerHTML = `${cell.icon}<span class="sc2-label">$${prize.toLocaleString()}</span>`;
+        }
+        cellEl.appendChild(valEl);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = 200;
+        cellEl.appendChild(canvas);
+
+        sc2SetupScratch(canvas, cellEl, idx);
+        grid.appendChild(cellEl);
+    });
+}
+
+function sc2SetupScratch(canvas, cellEl, idx) {
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+
+    const gradient = ctx.createLinearGradient(0, 0, w, h);
+    gradient.addColorStop(0, '#94a3b8');
+    gradient.addColorStop(0.3, '#cbd5e1');
+    gradient.addColorStop(0.5, '#94a3b8');
+    gradient.addColorStop(0.7, '#cbd5e1');
+    gradient.addColorStop(1, '#94a3b8');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, w, h);
+
+    for (let i = 0; i < 50; i++) {
+        ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.5})`;
+        ctx.beginPath();
+        ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 3, 0, 7);
+        ctx.fill();
+    }
+
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.5)';
+    ctx.font = 'bold 32px Outfit';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('SKY', w/2, h/2 - 15);
+    ctx.font = 'bold 14px Outfit';
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.3)';
+    ctx.fillText('SCRATCH', w/2, h/2 + 15);
+
+    let isDrawing = false;
+    let scratchCount = 0;
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) * (w / rect.width),
+            y: (clientY - rect.top) * (h / rect.height)
+        };
+    }
+
+    function scratch(pos) {
+        if (!isDrawing || sc2State.done) return;
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 24, 0, Math.PI * 2);
+        ctx.fill();
+        if (window.Sound && Math.random() < 0.4) Sound.scratch();
+        scratchCount++;
+        if (scratchCount > 5 && Math.random() < 0.1) sc2CheckProgress(canvas, cellEl, idx);
+    }
+
+    canvas.addEventListener('mousedown', e => { isDrawing = true; scratch(getPos(e)); });
+    canvas.addEventListener('mousemove', e => { if (isDrawing) scratch(getPos(e)); });
+    canvas.addEventListener('mouseup', () => { isDrawing = false; sc2CheckProgress(canvas, cellEl, idx); });
+    canvas.addEventListener('mouseleave', () => { isDrawing = false; });
+    canvas.addEventListener('touchstart', e => { e.preventDefault(); isDrawing = true; scratch(getPos(e)); });
+    canvas.addEventListener('touchmove', e => { e.preventDefault(); scratch(getPos(e)); });
+    canvas.addEventListener('touchend', () => { isDrawing = false; sc2CheckProgress(canvas, cellEl, idx); });
+}
+
+function sc2CheckProgress(canvas, cellEl, idx) {
+    if (cellEl.classList.contains('revealed')) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    try {
+        const data = ctx.getImageData(0, 0, w, h).data;
+        let transparent = 0;
+        for (let i = 3; i < data.length; i += 16) {
+            if (data[i] === 0) transparent++;
+        }
+        const percent = transparent / (data.length / 16);
+        // Augstāks slieksnis — grūtāk atklāt (jākasa vairāk)
+        if (percent > 0.65) sc2RevealCell(cellEl, idx);
+    } catch(e) {}
+}
+
+function sc2RevealCell(cellEl, idx) {
+    if (cellEl.classList.contains('revealed')) return;
+    cellEl.classList.add('revealed');
+    const canvas = cellEl.querySelector('canvas');
+    canvas.style.opacity = '0';
+    setTimeout(() => canvas.style.display = 'none', 400);
+
+    const cell = sc2State.cells[idx];
+    if (cell.isJackpot) {
+        cellEl.classList.add('jackpot-cell');
+        sc2State.hasJackpot = true;
+        if (window.Sound) Sound.slotJackpot();
+        showNotification('🎰 JACKPOT LAIČIŅŠ!', 'success');
+    } else if (cell.isBonus) {
+        sc2State.bonusMultiplier *= cell.bonusMult;
+        if (window.Sound) Sound.success();
+        showNotification(`✨ Bonusa reizinātājs x${cell.bonusMult}!`, 'success');
+    } else if (cell.isWinner) {
+        cellEl.classList.add('revealed-win');
+        if (window.Sound) Sound.scratchReveal();
+    } else {
+        if (window.Sound) Sound.scratchReveal();
+    }
+
+    sc2State.revealed++;
+    document.getElementById('sc2-revealed-count').innerText = sc2State.revealed;
+    sc2UpdatePotential();
+
+    if (sc2State.revealed === 9) sc2Finish();
+}
+
+function sc2UpdatePotential() {
+    const ticket = sc2State.ticket;
+    let counts = {};
+    sc2State.cells.forEach((cell, idx) => {
+        if (cell.isBonus || cell.isJackpot) return;
+        const cellEl = document.querySelector(`.sc2-cell[data-idx="${idx}"]`);
+        if (cellEl && cellEl.classList.contains('revealed')) {
+            if (!counts[cell.val]) counts[cell.val] = 0;
+            counts[cell.val]++;
+        }
+    });
+    let maxMatch = 0, maxVal = 0;
+    Object.entries(counts).forEach(([val, cnt]) => {
+        if (cnt >= 3 && parseInt(val) > maxVal) {
+            maxVal = parseInt(val);
+            maxMatch = cnt;
+        }
+    });
+    const potential = ticket.price * maxVal * sc2State.bonusMultiplier;
+    document.getElementById('sc2-potential').innerText = '$' + potential.toLocaleString();
+}
+
+function sc2RevealAll() {
+    if (sc2State.done) return;
+    document.querySelectorAll('.sc2-cell').forEach((cellEl, idx) => {
+        setTimeout(() => sc2RevealCell(cellEl, idx), idx * 80);
+    });
+}
+
+function sc2Finish() {
+    if (sc2State.done) return;
+    sc2State.done = true;
+
+    const ticket = sc2State.ticket;
+    let counts = {};
+    sc2State.cells.forEach(cell => {
+        if (cell.isBonus || cell.isJackpot) return;
+        if (!counts[cell.val]) counts[cell.val] = 0;
+        counts[cell.val]++;
+    });
+
+    let maxMatch = 0, maxVal = 0;
+    Object.entries(counts).forEach(([val, cnt]) => {
+        if (cnt >= 3 && parseInt(val) > maxVal) {
+            maxVal = parseInt(val);
+            maxMatch = cnt;
+        }
+    });
+
+    const msgEl = document.getElementById('sc2-msg');
+
+    if (maxMatch >= 3) {
+        // UZVARA (reti)
+        let prize = ticket.price * maxVal;
+        prize *= sc2State.bonusMultiplier;
+        if (sc2State.hasJackpot) prize += ticket.price * 100;
+        if (equipped.includes('diamond')) prize = Math.floor(prize * 1.5);
+        if (equipped.includes('hat')) prize = Math.floor(prize * 1.15);
+
+        wall += prize;
+        sc2Stats.wins++;
+        sc2Stats.totalWon += prize;
+        if (prize > sc2Stats.bestWin) sc2Stats.bestWin = prize;
+
+        msgEl.innerHTML = `<span class="text-emerald-400">🎉 UZVARA! ${maxMatch}× — LAIMĒTS $${prize.toLocaleString()}!</span>`;
+        msgEl.className = 'text-center font-black text-2xl h-8 mb-3';
+
+        if (window.Sound) {
+            if (prize > ticket.price * 20) Sound.jackpot();
+            else if (prize > ticket.price * 5) Sound.scratchWin();
+            else Sound.chipWin();
+        }
+
+        sc2Confetti(prize > ticket.price * 5 ? 120 : 60);
+        showNotification(`🎟️ Scratch: +$${prize.toLocaleString()}!`, 'success');
+
+        if (typeof trackWin === 'function') trackWin(prize, 'scratch');
+    } else {
+        // ZAUDĒJUMS (bieži)
+        msgEl.innerHTML = `<span class="text-red-400">😢 Nav 3 vienādu. Zaudēts $${ticket.price.toLocaleString()}.</span>`;
+        msgEl.className = 'text-center font-black text-xl h-8 mb-3';
+        if (window.Sound) Sound.scratchLose();
+        sc2Stats.totalWon -= ticket.price;
+    }
+
+    document.getElementById('sc2-reveal-all-btn').innerText = '🔄 JAUNU BIĻETI';
+    document.getElementById('sc2-reveal-all-btn').setAttribute('onclick', 'sc2BackToMenu()');
+
+    sc2UpdateStats();
+    updateUI();
+    autosave();
+}
+
+function sc2Confetti(count) {
+    const colors = ['#f59e0b', '#10b981', '#ec4899', '#3b82f6', '#a855f7', '#06b6d4'];
+    for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+            const conf = document.createElement('div');
+            conf.className = 'sc2-confetti';
+            conf.style.left = Math.random() * 100 + '%';
+            conf.style.background = colors[Math.floor(Math.random() * colors.length)];
+            conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            conf.style.width = (6 + Math.random() * 8) + 'px';
+            conf.style.height = (6 + Math.random() * 8) + 'px';
+            conf.style.animationDuration = (2 + Math.random() * 2) + 's';
+            document.body.appendChild(conf);
+            setTimeout(() => conf.remove(), 4000);
+        }, i * 20);
+    }
+}
+
+function sc2BackToMenu() {
+    document.getElementById('sc2-game').style.display = 'none';
+    document.getElementById('sc2-menu').style.display = 'block';
+    document.getElementById('sc2-reveal-all-btn').innerText = '👁️ ATKLĀT VISU';
+    document.getElementById('sc2-reveal-all-btn').setAttribute('onclick', 'sc2RevealAll()');
+    sc2UpdateStats();
+}
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        const grid = document.querySelector('#p-main .grid');
+        if (grid && !document.querySelector('.sc2-game-card')) {
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="game-card sc2-game-card" onclick="openGame('sc2-ov'); sc2RenderMenu()">
+                    <div class="text-4xl mb-3">🎟️</div>
+                    <h3 class="font-bold text-lg mb-1">Scratch</h3>
+                    <p class="text-xs text-red-400 font-bold">⚠️ Maz iespēja uzvarēt (8%)</p>
+                </div>
+            `);
+        }
+    }, 500);
+});
+
+console.log('✅ Scratch (maz iespēja uzvarēt) ielādēts!');
+</script>
+<!-- ============================================================ -->
+<!-- ============ 4 JAUNĀS SPĒLES =============================== -->
+<!-- ============================================================ -->
+
+<!-- MEGA SLOTS -->
+<div id="mlslots-ov" class="ov">
+    <div class="glass-panel p-6 w-full max-w-4xl text-center">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-left">
+                <h2 class="text-3xl font-black bg-gradient-to-r from-amber-400 to-pink-500 bg-clip-text text-transparent">🎰 MEGA SLOTS</h2>
+                <p class="text-xs text-slate-400">5 rullīši · 20 līnijas</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hud-balance text-sm py-1.5 px-3">💰 $<span class="w2">0</span></div>
+                <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ</button>
+            </div>
+        </div>
+        <div class="bg-slate-950 rounded-3xl p-4 border-4 border-amber-500/50 mb-4">
+            <div class="grid grid-cols-5 gap-2" id="ml-reels"></div>
+        </div>
+        <div class="flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-amber-500/30 mb-3">
+            <div class="text-left">
+                <div class="text-xs text-slate-400">Laimējušās:</div>
+                <div id="ml-win-lines" class="font-black text-emerald-400">0/20</div>
+            </div>
+            <div class="text-center">
+                <div class="text-xs text-slate-400">Laimests:</div>
+                <div id="ml-total-win" class="font-black text-amber-400 text-xl">$0</div>
+            </div>
+            <div class="text-right">
+                <div class="text-xs text-slate-400">/līnija:</div>
+                <div id="ml-bet-per-line" class="font-black text-white">$0</div>
+            </div>
+        </div>
+        <div class="flex items-center justify-center gap-3 bg-slate-900/80 p-3 rounded-xl border border-amber-500/30">
+            <span class="text-xs text-slate-300 font-bold">Likme:</span>
+            <input type="number" id="ml-bet" value="100" min="20" step="20" class="w-24 bg-slate-800 border border-slate-600 rounded-lg px-2 py-1 text-center font-bold text-sm text-white">
+            <button onclick="mlSpin()" id="ml-spin-btn" class="btn-gold py-3 px-8 text-lg font-black">🎰 GRIEZT</button>
+            <button onclick="mlAutoSpin(10)" id="ml-auto-btn" class="btn-primary py-2 px-4 text-xs">AUTO ×10</button>
+        </div>
+        <div id="ml-msg" class="mt-3 text-center font-black text-lg h-6"></div>
+    </div>
+</div>
+
+<!-- SIC BO -->
+<div id="sicbo-ov" class="ov">
+    <div class="glass-panel p-6 w-full max-w-3xl text-center">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-left">
+                <h2 class="text-3xl font-black bg-gradient-to-r from-red-400 to-amber-500 bg-clip-text text-transparent">🎲 SIC BO</h2>
+                <p class="text-xs text-slate-400">3 kauliņi · līdz x180</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hud-balance text-sm py-1.5 px-3">💰 $<span class="w2">0</span></div>
+                <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ</button>
+            </div>
+        </div>
+        <div class="bg-gradient-to-br from-red-900/40 to-slate-900/60 border-4 border-amber-500/40 rounded-3xl p-6 mb-4">
+            <div class="flex justify-center gap-4 mb-3">
+                <div id="sicbo-die1" class="sicbo-die">⚀</div>
+                <div id="sicbo-die2" class="sicbo-die">⚀</div>
+                <div id="sicbo-die3" class="sicbo-die">⚀</div>
+            </div>
+            <div id="sicbo-total" class="text-3xl font-black text-amber-400">Summa: 0</div>
+        </div>
+        <div class="mb-3">
+            <div class="text-xs text-slate-400 mb-2 font-bold">Izvēlies likmi:</div>
+            <div id="sicbo-bets" class="grid grid-cols-4 gap-2"></div>
+        </div>
+        <div class="flex items-center justify-between bg-slate-900/80 p-3 rounded-xl border border-amber-500/30 mb-3">
+            <div>
+                <span class="text-xs text-slate-400">Izvēlēts: </span>
+                <span id="sicbo-selected" class="font-black text-amber-400">Nav</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-xs text-slate-300 font-bold">Likme:</span>
+                <input type="number" id="sicbo-bet" value="100" min="10" class="w-24 bg-slate-800 border border-slate-600 rounded-lg px-2 py-1 text-center font-bold text-sm text-white">
+                <button onclick="sicboRoll()" id="sicbo-roll-btn" class="btn-gold py-2 px-6 text-sm font-black">🎲 MEST</button>
+            </div>
+        </div>
+        <div id="sicbo-msg" class="text-center font-black text-lg h-6"></div>
+    </div>
+</div>
+
+<!-- BIG SIX WHEEL -->
+<div id="b6-ov" class="ov">
+    <div class="glass-panel p-6 w-full max-w-3xl text-center">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-left">
+                <h2 class="text-3xl font-black bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">🎡 BIG SIX WHEEL</h2>
+                <p class="text-xs text-slate-400">Milzīgs rats · līdz x40</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hud-balance text-sm py-1.5 px-3">💰 $<span class="w2">0</span></div>
+                <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ</button>
+            </div>
+        </div>
+        <div class="relative my-4 flex justify-center">
+            <canvas id="b6-canvas" width="340" height="340" class="rounded-full border-4 border-amber-500/50 shadow-2xl"></canvas>
+            <div style="position:absolute; top:-12px; left:50%; transform:translateX(-50%); font-size:2rem; color:#ef4444; z-index:5;">▼</div>
+        </div>
+        <div class="mb-3">
+            <div class="text-xs text-slate-400 mb-2 font-bold">Izvēlies sektoru:</div>
+            <div id="b6-sectors" class="grid grid-cols-3 gap-2"></div>
+        </div>
+        <div class="flex items-center justify-between bg-slate-900/80 p-3 rounded-xl border border-amber-500/30 mb-3">
+            <div>
+                <span class="text-xs text-slate-400">Izvēlēts: </span>
+                <span id="b6-selected" class="font-black text-amber-400">Nav</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-xs text-slate-300 font-bold">Likme:</span>
+                <input type="number" id="b6-bet" value="100" min="10" class="w-24 bg-slate-800 border border-slate-600 rounded-lg px-2 py-1 text-center font-bold text-sm text-white">
+                <button onclick="b6Spin()" id="b6-spin-btn" class="btn-gold py-2 px-6 text-sm font-black">🎡 GRIEZT</button>
+            </div>
+        </div>
+        <div id="b6-msg" class="text-center font-black text-lg h-6"></div>
+    </div>
+</div>
+
+<!-- KENO -->
+<div id="keno-ov" class="ov">
+    <div class="glass-panel p-6 w-full max-w-3xl text-center">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-left">
+                <h2 class="text-3xl font-black bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">🎯 KENO</h2>
+                <p class="text-xs text-slate-400">Izvēlies 1-10 skaitļus no 1-80</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="hud-balance text-sm py-1.5 px-3">💰 $<span class="w2">0</span></div>
+                <button onclick="ovBack()" class="btn-danger py-2 px-4 text-xs">ATPAKAĻ</button>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-cyan-500/30 mb-3 text-sm">
+            <div>
+                <span class="text-xs text-slate-400">Izvēlēti: </span>
+                <span id="keno-count" class="font-black text-cyan-400">0</span>/10
+            </div>
+            <div>
+                <span class="text-xs text-slate-400">Laimests: </span>
+                <span id="keno-potential" class="font-black text-amber-400">$0</span>
+            </div>
+            <div>
+                <span class="text-xs text-slate-400">Trāpīti: </span>
+                <span id="keno-matches" class="font-black text-emerald-400">0</span>
+            </div>
+        </div>
+
+        <div id="keno-grid" class="grid grid-cols-10 gap-1.5 mb-4 p-3 bg-slate-950 rounded-2xl border-2 border-cyan-500/30"></div>
+
+        <div class="flex items-center justify-center gap-3 bg-slate-900/80 p-3 rounded-xl border border-cyan-500/30 mb-3">
+            <span class="text-xs text-slate-300 font-bold">Likme ($):</span>
+            <input type="number" id="keno-bet" value="100" min="10" class="w-24 bg-slate-800 border border-slate-600 rounded-lg px-2 py-1 text-center font-bold text-sm text-white">
+            <button onclick="kenoDraw()" id="keno-draw-btn" class="btn-gold py-2 px-6 text-sm font-black">🎯 SĀKT IZLOZI</button>
+            <button onclick="kenoClear()" class="btn-primary py-2 px-4 text-xs">🗑️ NOTĪRĪT</button>
+        </div>
+
+        <div class="text-xs text-slate-400 mb-2">Ātrā izvēle:</div>
+        <div class="flex justify-center gap-2 flex-wrap">
+            <button onclick="kenoQuick(1)" class="btn-primary py-1 px-3 text-xs">1 sk.</button>
+            <button onclick="kenoQuick(3)" class="btn-primary py-1 px-3 text-xs">3 sk.</button>
+            <button onclick="kenoQuick(5)" class="btn-primary py-1 px-3 text-xs">5 sk.</button>
+            <button onclick="kenoQuick(10)" class="btn-primary py-1 px-3 text-xs">10 sk.</button>
+        </div>
+
+        <div id="keno-msg" class="mt-3 text-center font-black text-lg h-6"></div>
+    </div>
+</div>
+
+<style>
+.ml-reel {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 50%, #1e293b 100%);
+    border-radius: 10px;
+    border: 2px solid rgba(245, 158, 11, 0.3);
+    overflow: hidden; height: 240px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+}
+.ml-reel-symbol { font-size: 2.8rem; height: 60px; display: flex; align-items: center; justify-content: center; }
+.ml-reel.spinning .ml-reel-symbol { animation: mlSpin 0.08s linear infinite; filter: blur(2px); }
+@keyframes mlSpin {
+    0% { transform: translateY(-10px); opacity: 0.7; }
+    50% { transform: translateY(10px); opacity: 0.5; }
+    100% { transform: translateY(-10px); opacity: 0.7; }
+}
+.ml-reel.win { border-color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+.ml-cell.win { background: rgba(16, 185, 129, 0.3); border-radius: 4px; animation: mlWinPulse 0.5s ease infinite alternate; }
+@keyframes mlWinPulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+.sicbo-bet-btn {
+    padding: 10px 6px; border-radius: 10px;
+    background: rgba(30, 41, 59, 0.8);
+    border: 2px solid rgba(255,255,255,0.15);
+    cursor: pointer; font-weight: 700;
+    transition: all 0.2s; color: white; font-size: 0.75rem;
+}
+.sicbo-bet-btn:hover { border-color: #f59e0b; transform: translateY(-2px); }
+.sicbo-bet-btn.selected {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0.1));
+    border-color: #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+}
+.sicbo-bet-btn .lbl { font-size: 0.7rem; color: #94a3b8; }
+.sicbo-bet-btn .val { font-size: 0.9rem; color: #f59e0b; }
+.sicbo-bet-btn .mult { font-size: 0.6rem; color: #10b981; font-weight: 900; }
+
+.b6-sector-btn {
+    padding: 10px 6px; border-radius: 10px;
+    background: rgba(30, 41, 59, 0.8);
+    border: 2px solid rgba(255,255,255,0.15);
+    cursor: pointer; font-weight: 700;
+    transition: all 0.2s; color: white; text-align: center;
+}
+.b6-sector-btn:hover { border-color: #a855f7; transform: translateY(-2px); }
+.b6-sector-btn.selected {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(168, 85, 247, 0.1));
+    border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+}
+
+.sicbo-die {
+    font-size: 4rem; width: 90px; height: 90px;
+    display: flex; align-items: center; justify-content: center;
+    background: white; border-radius: 16px; color: #0f172a;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.sicbo-die.rolling { animation: sicboDieRoll 0.4s ease infinite; }
+@keyframes sicboDieRoll {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(90deg) scale(1.1); }
+    50% { transform: rotate(180deg) scale(1); }
+    75% { transform: rotate(270deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+.keno-cell {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: rgba(30, 41, 59, 0.8);
+    border: 2px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: white;
+    transition: all 0.2s;
+    user-select: none;
+}
+.keno-cell:hover { transform: scale(1.1); border-color: #06b6d4; }
+.keno-cell.selected {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    border-color: #06b6d4;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
+}
+.keno-cell.drawn {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-color: #f59e0b;
+    animation: kenoPulse 0.6s ease infinite alternate;
+}
+.keno-cell.hit {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: #10b981;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
+    animation: kenoHitPulse 0.5s ease infinite alternate;
+}
+.keno-cell.miss {
+    background: rgba(30, 41, 59, 0.4);
+    opacity: 0.5;
+}
+@keyframes kenoPulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+}
+@keyframes kenoHitPulse {
+    from { transform: scale(1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); }
+    to { transform: scale(1.15); box-shadow: 0 0 30px rgba(16, 185, 129, 1); }
+}
+</style>
+
+<script>
+(function() {
+    'use strict';
+
+    // ============================================================
+    // MEGA SLOTS
+    // ============================================================
+    const ML_SYMBOLS = [
+        { icon: '🍒', val: 2, weight: 30 },
+        { icon: '🍋', val: 3, weight: 25 },
+        { icon: '🍊', val: 5, weight: 20 },
+        { icon: '🔔', val: 10, weight: 15 },
+        { icon: '⭐', val: 20, weight: 10 },
+        { icon: '💎', val: 50, weight: 7 },
+        { icon: '7️⃣', val: 100, weight: 4 },
+        { icon: '👑', val: 250, weight: 2 },
+        { icon: '🎰', val: 500, weight: 1 }
+    ];
+    const ML_PAYLINES = [
+        [1,1,1,1,1],[0,0,0,0,0],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],
+        [0,0,1,2,2],[2,2,1,0,0],[1,2,2,2,1],[1,0,0,0,1],[0,1,1,1,0],
+        [2,1,1,1,2],[1,0,1,0,1],[1,2,1,2,1],[0,0,2,0,0],[2,2,0,2,2],
+        [0,1,0,1,0],[2,1,2,1,2],[1,2,0,2,1],[1,0,2,0,1],[0,2,0,2,0]
+    ];
+    let mlSpinning = false;
+    let mlCurrentGrid = [];
+
+    function mlRandomSymbol() {
+        const total = ML_SYMBOLS.reduce((a, s) => a + s.weight, 0);
+        let r = Math.random() * total;
+        for (const sym of ML_SYMBOLS) { r -= sym.weight; if (r <= 0) return sym; }
+        return ML_SYMBOLS[0];
+    }
+    function mlRenderReels(grid) {
+        const container = document.getElementById('ml-reels');
+        if (!container) return;
+        container.innerHTML = '';
+        for (let col = 0; col < 5; col++) {
+            const reel = document.createElement('div');
+            reel.className = 'ml-reel';
+            reel.id = 'ml-reel-' + col;
+            for (let row = 0; row < 3; row++) {
+                const sym = document.createElement('div');
+                sym.className = 'ml-reel-symbol ml-cell';
+                sym.dataset.col = col;
+                sym.dataset.row = row;
+                sym.innerText = grid[col][row].icon;
+                reel.appendChild(sym);
+            }
+            container.appendChild(reel);
+        }
+    }
+
+    window.mlSpin = function() {
+        const bet = parseInt(document.getElementById('ml-bet').value) || 0;
+        if (bet < 20) return showNotification("Minimālā likme: $20", "error");
+        if (typeof wall === 'undefined' || bet > wall) return showNotification("Nepietiek naudas!", "error");
+        if (mlSpinning) return;
+
+        mlSpinning = true;
+        wall -= bet;
+        if (typeof updateUI === 'function') updateUI();
+
+        const betPerLine = Math.floor(bet / 20);
+        document.getElementById('ml-bet-per-line').innerText = '$' + betPerLine;
+        document.getElementById('ml-total-win').innerText = '$0';
+        document.getElementById('ml-win-lines').innerText = '0/20';
+        document.getElementById('ml-msg').innerText = '';
+
+        document.querySelectorAll('.ml-cell.win').forEach(c => c.classList.remove('win'));
+        document.querySelectorAll('.ml-reel.win').forEach(c => c.classList.remove('win'));
+
+        mlCurrentGrid = Array(5).fill().map(() => Array(3).fill().map(() => mlRandomSymbol()));
+        mlRenderReels(mlCurrentGrid);
+
+        for (let i = 0; i < 5; i++) {
+            const r = document.getElementById('ml-reel-' + i);
+            if (r) r.classList.add('spinning');
+        }
+
+        const interval = setInterval(() => {
+            for (let col = 0; col < 5; col++) {
+                for (let row = 0; row < 3; row++) {
+                    const cell = document.querySelector(`.ml-cell[data-col="${col}"][data-row="${row}"]`);
+                    if (cell) cell.innerText = ML_SYMBOLS[Math.floor(Math.random()*ML_SYMBOLS.length)].icon;
+                }
+            }
+        }, 80);
+
+        const finalGrid = Array(5).fill().map(() => Array(3).fill().map(() => mlRandomSymbol()));
+
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                const r = document.getElementById('ml-reel-' + i);
+                if (r) r.classList.remove('spinning');
+            }, 800 + i * 300);
+        }
+
+        setTimeout(() => {
+            clearInterval(interval);
+            mlCurrentGrid = finalGrid;
+            mlRenderReels(finalGrid);
+
+            let totalWin = 0, winLineCount = 0;
+            const winningCells = new Set();
+
+            ML_PAYLINES.forEach(line => {
+                const symbols = line.map((row, col) => mlCurrentGrid[col][row]);
+                const firstIcon = symbols[0].icon;
+                let matchCount = 1;
+                for (let i = 1; i < 5; i++) {
+                    if (symbols[i].icon === firstIcon) matchCount++;
+                    else break;
+                }
+                if (matchCount >= 3) {
+                    winLineCount++;
+                    const sym = ML_SYMBOLS.find(s => s.icon === firstIcon);
+                    totalWin += betPerLine * sym.val * matchCount;
+                    for (let i = 0; i < matchCount; i++) winningCells.add(`${i}-${line[i]}`);
+                }
+            });
+
+            setTimeout(() => {
+                winningCells.forEach(key => {
+                    const [col, row] = key.split('-');
+                    const cell = document.querySelector(`.ml-cell[data-col="${col}"][data-row="${row}"]`);
+                    if (cell) cell.classList.add('win');
+                });
+            }, 50);
+
+            if (typeof equipped !== 'undefined') {
+                if (equipped.includes('diamond')) totalWin = Math.floor(totalWin * 1.5);
+                if (equipped.includes('hat')) totalWin = Math.floor(totalWin * 1.15);
+            }
+
+            if (totalWin > 0) {
+                wall += totalWin;
+                document.getElementById('ml-total-win').innerText = '$' + totalWin.toLocaleString();
+                document.getElementById('ml-win-lines').innerText = winLineCount + '/20';
+                document.getElementById('ml-msg').innerHTML = `<span class="text-emerald-400">🎉 LAIMĒTS $${totalWin.toLocaleString()}!</span>`;
+                showNotification(`🎰 Mega Slots: +$${totalWin.toLocaleString()}!`, 'success');
+            } else {
+                document.getElementById('ml-msg').innerHTML = `<span class="text-red-400">😢 Nav laimesta</span>`;
+            }
+
+            if (typeof updateUI === 'function') updateUI();
+            mlSpinning = false;
+        }, 2400);
+    };
+
+    window.mlAutoSpin = function(count) {
+        let done = 0;
+        const iv = setInterval(() => {
+            if (!mlSpinning && done < count) { window.mlSpin(); done++; }
+            if (done >= count && !mlSpinning) clearInterval(iv);
+        }, 3000);
+    };
+
+    // ============================================================
+    // SIC BO
+    // ============================================================
+    const SICBO_BETS = [
+        { id: 'small',  label: 'Mazs',     sub: '4-10',   mult: 2 },
+        { id: 'big',    label: 'Liels',    sub: '11-17',  mult: 2 },
+        { id: 'odd',    label: 'Nepāra',   sub: '',       mult: 2 },
+        { id: 'even',   label: 'Pāris',    sub: '',       mult: 2 },
+        { id: 'triple1',label: '3×1',      sub: '⚀⚀⚀',   mult: 180 },
+        { id: 'triple2',label: '3×2',      sub: '⚁⚁⚁',   mult: 180 },
+        { id: 'triple3',label: '3×3',      sub: '⚂⚂⚂',   mult: 180 },
+        { id: 'triple4',label: '3×4',      sub: '⚃⚃⚃',   mult: 180 },
+        { id: 'triple5',label: '3×5',      sub: '⚄⚄⚄',   mult: 180 },
+        { id: 'triple6',label: '3×6',      sub: '⚅⚅⚅',   mult: 180 },
+        { id: 'total4', label: 'Sum 4',    sub: '',       mult: 60 },
+        { id: 'total5', label: 'Sum 5',    sub: '',       mult: 30 },
+        { id: 'total6', label: 'Sum 6',    sub: '',       mult: 17 },
+        { id: 'total7', label: 'Sum 7',    sub: '',       mult: 12 },
+        { id: 'total8', label: 'Sum 8',    sub: '',       mult: 8 },
+        { id: 'total9', label: 'Sum 9',    sub: '',       mult: 6 },
+        { id: 'total10',label: 'Sum 10',   sub: '',       mult: 6 },
+        { id: 'total11',label: 'Sum 11',   sub: '',       mult: 6 },
+        { id: 'total12',label: 'Sum 12',   sub: '',       mult: 6 },
+        { id: 'total13',label: 'Sum 13',   sub: '',       mult: 8 },
+        { id: 'total14',label: 'Sum 14',   sub: '',       mult: 12 },
+        { id: 'total15',label: 'Sum 15',   sub: '',       mult: 17 },
+        { id: 'total16',label: 'Sum 16',   sub: '',       mult: 30 },
+        { id: 'total17',label: 'Sum 17',   sub: '',       mult: 60 }
+    ];
+
+    let sicboSelected = null;
+    let sicboRolling = false;
+
+    window.renderSicBoBets = function() {
+        const el = document.getElementById('sicbo-bets');
+        if (!el) return;
+        el.innerHTML = SICBO_BETS.map(b => `
+            <div class="sicbo-bet-btn ${sicboSelected === b.id ? 'selected' : ''}" onclick="sicboSelect('${b.id}')">
+                <div class="lbl">${b.label}</div>
+                ${b.sub ? `<div class="val">${b.sub}</div>` : ''}
+                <div class="mult">×${b.mult}</div>
+            </div>
+        `).join('');
+    };
+
+    window.sicboSelect = function(id) {
+        if (sicboRolling) return;
+        sicboSelected = id;
+        const bet = SICBO_BETS.find(b => b.id === id);
+        document.getElementById('sicbo-selected').innerText = bet ? bet.label : 'Nav';
+        window.renderSicBoBets();
+    };
+
+    window.sicboRoll = function() {
+        if (sicboRolling) return;
+        if (!sicboSelected) return showNotification("Izvēlies likmi!", "error");
+        const bet = parseInt(document.getElementById('sicbo-bet').value) || 0;
+        if (bet <= 0 || bet > wall) return showNotification("Nederīga likme!", "error");
+
+        sicboRolling = true;
+        wall -= bet;
+        if (typeof updateUI === 'function') updateUI();
+
+        const d1 = document.getElementById('sicbo-die1');
+        const d2 = document.getElementById('sicbo-die2');
+        const d3 = document.getElementById('sicbo-die3');
+        const dice = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+        [d1, d2, d3].forEach(d => d.classList.add('rolling'));
+
+        const iv = setInterval(() => {
+            d1.innerText = dice[Math.floor(Math.random()*6)];
+            d2.innerText = dice[Math.floor(Math.random()*6)];
+            d3.innerText = dice[Math.floor(Math.random()*6)];
+        }, 80);
+
+        setTimeout(() => {
+            clearInterval(iv);
+            const r1 = Math.floor(Math.random()*6) + 1;
+            const r2 = Math.floor(Math.random()*6) + 1;
+            const r3 = Math.floor(Math.random()*6) + 1;
+            const total = r1 + r2 + r3;
+
+            [d1, d2, d3].forEach(d => d.classList.remove('rolling'));
+            d1.innerText = dice[r1-1];
+            d2.innerText = dice[r2-1];
+            d3.innerText = dice[r3-1];
+            document.getElementById('sicbo-total').innerText = 'Summa: ' + total;
+
+            const selBet = SICBO_BETS.find(b => b.id === sicboSelected);
+            let win = false;
+            const allSame = (r1 === r2 && r2 === r3);
+
+            if (selBet) {
+                switch (selBet.id) {
+                    case 'small':  win = total >= 4 && total <= 10 && !allSame; break;
+                    case 'big':    win = total >= 11 && total <= 17 && !allSame; break;
+                    case 'odd':    win = total % 2 === 1 && !allSame; break;
+                    case 'even':   win = total % 2 === 0 && !allSame; break;
+                    case 'triple1':win = r1 === 1 && r2 === 1 && r3 === 1; break;
+                    case 'triple2':win = r1 === 2 && r2 === 2 && r3 === 2; break;
+                    case 'triple3':win = r1 === 3 && r2 === 3 && r3 === 3; break;
+                    case 'triple4':win = r1 === 4 && r2 === 4 && r3 === 4; break;
+                    case 'triple5':win = r1 === 5 && r2 === 5 && r3 === 5; break;
+                    case 'triple6':win = r1 === 6 && r2 === 6 && r3 === 6; break;
+                    default: {
+                        const m = selBet.id.match(/total(\d+)/);
+                        if (m) win = total === parseInt(m[1]);
+                    }
+                }
+            }
+
+            let msg = '';
+            if (win) {
+                let winAmt = bet * selBet.mult;
+                if (typeof equipped !== 'undefined') {
+                    if (equipped.includes('diamond')) winAmt = Math.floor(winAmt * 1.5);
+                    if (equipped.includes('hat')) winAmt = Math.floor(winAmt * 1.15);
+                }
+                wall += winAmt;
+                msg = `🎉 UZVARA! Summa ${total} — LAIMĒTS $${winAmt.toLocaleString()}!`;
+                showNotification(`🎲 Sic Bo: +$${winAmt.toLocaleString()}!`, 'success');
+            } else {
+                msg = `😢 Summa ${total}. Nav laimesta.`;
+            }
+
+            document.getElementById('sicbo-msg').innerHTML = win ?
+                `<span class="text-emerald-400">${msg}</span>` :
+                `<span class="text-red-400">${msg}</span>`;
+
+            if (typeof updateUI === 'function') updateUI();
+            sicboRolling = false;
+        }, 1500);
+    };
+
+    // ============================================================
+    // BIG SIX WHEEL
+    // ============================================================
+    const B6_SECTORS = [
+        { id: 'joker',  label: '🃏 Joker',  mult: 40,  color: '#a855f7', weight: 2 },
+        { id: 'logo',   label: '⭐ Sky',    mult: 20,  color: '#06b6d4', weight: 3 },
+        { id: 'gold1',  label: '🥇 1',      mult: 5,   color: '#f59e0b', weight: 5 },
+        { id: 'gold2',  label: '🥇 2',      mult: 5,   color: '#f59e0b', weight: 5 },
+        { id: 'gold5',  label: '🥇 5',      mult: 5,   color: '#f59e0b', weight: 4 },
+        { id: 'gold10', label: '🥇 10',     mult: 5,   color: '#f59e0b', weight: 4 },
+        { id: 'gold20', label: '🥇 20',     mult: 5,   color: '#f59e0b', weight: 3 },
+        { id: 'red',    label: '🔴 Sark.',  mult: 1.5, color: '#ef4444', weight: 7 },
+        { id: 'black',  label: '⚫ Meln.',  mult: 1.5, color: '#1e293b', weight: 7 }
+    ];
+
+    let b6Selected = null;
+    let b6Spinning = false;
+
+    window.drawB6Wheel = function(rotation) {
+        const cv = document.getElementById('b6-canvas');
+        if (!cv) return;
+        const ctx = cv.getContext('2d');
+        const cx = 170, cy = 170, r = 160;
+
+        ctx.clearRect(0, 0, 340, 340);
+
+        const total = B6_SECTORS.length;
+        const arc = (2 * Math.PI) / total;
+
+        B6_SECTORS.forEach((sec, i) => {
+            const start = rotation + i * arc;
+            ctx.beginPath();
+            ctx.fillStyle = sec.color;
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, r, start, start + arc);
+            ctx.fill();
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.save();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 13px Outfit';
+            ctx.textAlign = 'center';
+            ctx.translate(cx + Math.cos(start + arc/2) * (r - 45), cy + Math.sin(start + arc/2) * (r - 45));
+            ctx.rotate(start + arc/2 + Math.PI/2);
+            ctx.fillText(sec.label, 0, 0);
+            ctx.restore();
+        });
+
+        ctx.beginPath();
+        ctx.fillStyle = '#0f172a';
+        ctx.arc(cx, cy, 30, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = 'bold 16px Outfit';
+        ctx.textAlign = 'center';
+        ctx.fillText('SKY', cx, cy + 5);
+    };
+
+    window.renderB6Sectors = function() {
+        const el = document.getElementById('b6-sectors');
+        if (!el) return;
+        el.innerHTML = B6_SECTORS.map(s => `
+            <div class="b6-sector-btn ${b6Selected === s.id ? 'selected' : ''}" onclick="b6Select('${s.id}')">
+                <div class="text-base">${s.label}</div>
+                <div class="text-[10px] text-emerald-400 font-black">×${s.mult}</div>
+            </div>
+        `).join('');
+    };
+
+    window.b6Select = function(id) {
+        if (b6Spinning) return;
+        b6Selected = id;
+        const s = B6_SECTORS.find(x => x.id === id);
+        document.getElementById('b6-selected').innerText = s ? s.label : 'Nav';
+        window.renderB6Sectors();
+    };
+
+    window.b6Spin = function() {
+        if (b6Spinning) return;
+        if (!b6Selected) return showNotification("Izvēlies sektoru!", "error");
+        const bet = parseInt(document.getElementById('b6-bet').value) || 0;
+        if (bet <= 0 || bet > wall) return showNotification("Nederīga likme!", "error");
+
+        b6Spinning = true;
+        wall -= bet;
+        if (typeof updateUI === 'function') updateUI();
+
+        const totalWeight = B6_SECTORS.reduce((a, s) => a + s.weight, 0);
+        let r = Math.random() * totalWeight;
+        let winIdx = 0;
+        for (let i = 0; i < B6_SECTORS.length; i++) {
+            r -= B6_SECTORS[i].weight;
+            if (r <= 0) { winIdx = i; break; }
+        }
+
+        const totalSlices = B6_SECTORS.length;
+        const arc = (2 * Math.PI) / totalSlices;
+        const targetAngle = (1.5 * Math.PI) - ((winIdx + 0.5) * arc);
+        const extraRot = 12 * Math.PI;
+        const totalRotation = extraRot + targetAngle;
+        const duration = 5000;
+        const start = performance.now();
+
+        document.getElementById('b6-msg').innerHTML = '<span class="text-amber-400">Rats griežas...</span>';
+
+        const animate = (now) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 5);
+            window.drawB6Wheel(totalRotation * ease);
+            if (progress < 1) requestAnimationFrame(animate);
+            else {
+                window.drawB6Wheel(targetAngle);
+                const winSec = B6_SECTORS[winIdx];
+                const playerSec = B6_SECTORS.find(s => s.id === b6Selected);
+                const win = playerSec && playerSec.id === winSec.id;
+
+                let msg = '';
+                if (win) {
+                    let winAmt = Math.floor(bet * winSec.mult);
+                    if (typeof equipped !== 'undefined') {
+                        if (equipped.includes('diamond')) winAmt = Math.floor(winAmt * 1.5);
+                        if (equipped.includes('hat')) winAmt = Math.floor(winAmt * 1.15);
+                    }
+                    wall += winAmt;
+                    msg = `🎉 ${winSec.label} — LAIMĒTS $${winAmt.toLocaleString()}!`;
+                    showNotification(`🎡 Big Six: +$${winAmt.toLocaleString()}!`, 'success');
+                } else {
+                    msg = `😢 ${winSec.label} — nav laimesta.`;
+                }
+
+                document.getElementById('b6-msg').innerHTML = win ?
+                    `<span class="text-emerald-400">${msg}</span>` :
+                    `<span class="text-red-400">${msg}</span>`;
+
+                if (typeof updateUI === 'function') updateUI();
+                b6Spinning = false;
+            }
+        };
+        requestAnimationFrame(animate);
+    };
+
+    // ============================================================
+    // KENO
+    // ============================================================
+    let kenoSelected = new Set();
+    let kenoDrawn = new Set();
+    let kenoPlaying = false;
+
+    // Keno izmaksas tabula (cik trāpīti -> reizinātājs)
+    const KENO_PAYOUTS = {
+        1: {1: 3},
+        2: {2: 12},
+        3: {2: 1, 3: 45},
+        4: {2: 1, 3: 4, 4: 100},
+        5: {3: 2, 4: 20, 5: 500},
+        6: {3: 1, 4: 5, 5: 50, 6: 1200},
+        7: {4: 3, 5: 20, 6: 200, 7: 5000},
+        8: {4: 2, 5: 10, 6: 50, 7: 1000, 8: 10000},
+        9: {4: 1, 5: 5, 6: 25, 7: 200, 8: 2500, 9: 25000},
+        10: {5: 2, 6: 10, 7: 50, 8: 500, 9: 5000, 10: 100000}
+    };
+
+    function kenoRenderGrid() {
+        const grid = document.getElementById('keno-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        for (let i = 1; i <= 80; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'keno-cell';
+            cell.dataset.num = i;
+            cell.innerText = i;
+            cell.onclick = () => window.kenoToggle(i);
+            grid.appendChild(cell);
+        }
+    }
+
+    window.kenoToggle = function(num) {
+        if (kenoPlaying) return;
+        if (kenoSelected.has(num)) {
+            kenoSelected.delete(num);
+        } else {
+            if (kenoSelected.size >= 10) return showNotification("Maksimāli 10 skaitļi!", "error");
+            kenoSelected.add(num);
+        }
+        kenoUpdateUI();
+    };
+
+    window.kenoClear = function() {
+        if (kenoPlaying) return;
+        kenoSelected.clear();
+        kenoDrawn.clear();
+        kenoUpdateUI();
+        document.getElementById('keno-msg').innerText = '';
+    };
+
+    window.kenoQuick = function(count) {
+        if (kenoPlaying) return;
+        kenoSelected.clear();
+        while (kenoSelected.size < count) {
+            kenoSelected.add(Math.floor(Math.random() * 80) + 1);
+        }
+        kenoUpdateUI();
+    };
+
+    function kenoUpdateUI() {
+        document.getElementById('keno-count').innerText = kenoSelected.size;
+        const cells = document.querySelectorAll('.keno-cell');
+        cells.forEach(cell => {
+            const n = parseInt(cell.dataset.num);
+            cell.className = 'keno-cell';
+            if (kenoSelected.has(n)) cell.classList.add('selected');
+            if (kenoDrawn.has(n)) {
+                cell.classList.add('drawn');
+                if (kenoSelected.has(n)) cell.classList.add('hit');
+            }
+        });
+        // Potenciālais laimests
+        const bet = parseInt(document.getElementById('keno-bet').value) || 0;
+        const count = kenoSelected.size;
+        if (count > 0 && KENO_PAYOUTS[count]) {
+            const maxMult = Math.max(...Object.values(KENO_PAYOUTS[count]));
+            document.getElementById('keno-potential').innerText = '$' + (bet * maxMult).toLocaleString();
+        } else {
+            document.getElementById('keno-potential').innerText = '$0';
+        }
+    }
+
+    window.kenoDraw = function() {
+        if (kenoPlaying) return;
+        const count = kenoSelected.size;
+        if (count < 1) return showNotification("Izvēlies vismaz 1 skaitli!", "error");
+        const bet = parseInt(document.getElementById('keno-bet').value) || 0;
+        if (bet < 10 || bet > wall) return showNotification("Nederīga likme!", "error");
+
+        kenoPlaying = true;
+        wall -= bet;
+        if (typeof updateUI === 'function') updateUI();
+
+        document.getElementById('keno-msg').innerHTML = '<span class="text-amber-400">Izloze sākas...</span>';
+        document.getElementById('keno-matches').innerText = '0';
+
+        // Izvelkam 20 unikālus skaitļus
+        const allNums = [];
+        for (let i = 1; i <= 80; i++) allNums.push(i);
+        allNums.sort(() => Math.random() - 0.5);
+        const drawn = allNums.slice(0, 20);
+
+        kenoDrawn.clear();
+
+        // Atklājam pa vienam
+        let idx = 0;
+        const interval = setInterval(() => {
+            if (idx >= 20) {
+                clearInterval(interval);
+                kenoFinish(bet);
+                return;
+            }
+            kenoDrawn.add(drawn[idx]);
+            kenoUpdateUI();
+            idx++;
+        }, 150);
+    };
+
+    function kenoFinish(bet) {
+        const count = kenoSelected.size;
+        let matches = 0;
+        kenoSelected.forEach(n => { if (kenoDrawn.has(n)) matches++; });
+
+        document.getElementById('keno-matches').innerText = matches;
+
+        const payoutTable = KENO_PAYOUTS[count] || {};
+        const mult = payoutTable[matches] || 0;
+
+        if (mult > 0) {
+            let winAmt = bet * mult;
+            if (typeof equipped !== 'undefined') {
+                if (equipped.includes('diamond')) winAmt = Math.floor(winAmt * 1.5);
+                if (equipped.includes('hat')) winAmt = Math.floor(winAmt * 1.15);
+            }
+            wall += winAmt;
+            document.getElementById('keno-msg').innerHTML = `<span class="text-emerald-400">🎉 ${matches} trāpīti! LAIMĒTS $${winAmt.toLocaleString()} (x${mult})!</span>`;
+            showNotification(`🎯 Keno: +$${winAmt.toLocaleString()}!`, 'success');
+        } else {
+            document.getElementById('keno-msg').innerHTML = `<span class="text-red-400">😢 ${matches} trāpīti. Nav laimesta.</span>`;
+        }
+
+        if (typeof updateUI === 'function') updateUI();
+        kenoPlaying = false;
+    }
+
+    // ============================================================
+    // PIEVIENO SPĒĻU KARTĪTES MENU
+    // ============================================================
+    function addGameCards() {
+        const grid = document.querySelector('#p-main .grid');
+        if (!grid) return;
+
+        if (!document.querySelector('.v8-mlslots-card')) {
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="game-card v8-mlslots-card" onclick="openGame('mlslots-ov')">
+                    <div class="text-4xl mb-3">🎰</div>
+                    <h3 class="font-bold text-lg mb-1">Mega Slots</h3>
+                    <p class="text-xs text-slate-400">5 rullīši · 20 līnijas</p>
+                </div>
+            `);
+        }
+        if (!document.querySelector('.v8-sicbo-card')) {
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="game-card v8-sicbo-card" onclick="openGame('sicbo-ov'); renderSicBoBets()">
+                    <div class="text-4xl mb-3">🎲</div>
+                    <h3 class="font-bold text-lg mb-1">Sic Bo</h3>
+                    <p class="text-xs text-slate-400">3 kauliņi · x180</p>
+                </div>
+            `);
+        }
+        if (!document.querySelector('.v8-b6-card')) {
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="game-card v8-b6-card" onclick="openGame('b6-ov'); drawB6Wheel(0); renderB6Sectors()">
+                    <div class="text-4xl mb-3">🎡</div>
+                    <h3 class="font-bold text-lg mb-1">Big Six Wheel</h3>
+                    <p class="text-xs text-slate-400">Milzīgs rats · x40</p>
+                </div>
+            `);
+        }
+        if (!document.querySelector('.v8-keno-card')) {
+            grid.insertAdjacentHTML('beforeend', `
+                <div class="game-card v8-keno-card" onclick="openGame('keno-ov'); kenoRenderGrid(); kenoClear(); kenoUpdateUI()">
+                    <div class="text-4xl mb-3">🎯</div>
+                    <h3 class="font-bold text-lg mb-1">Keno</h3>
+                    <p class="text-xs text-slate-400">Izvēlies līdz 10 skaitļiem</p>
+                </div>
+            `);
+        }
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            addGameCards();
+            window.drawB6Wheel(0);
+            window.renderSicBoBets();
+            kenoRenderGrid();
+            console.log('✅ 4 jaunās spēles ielādētas!');
+        }, 500);
+    });
+
+})();
+</script>
+</body>
+</html>
